@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>컨빌 컨텐츠 응대 자동화</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+:root{
+  --bg:#F7F4EE; --bg-card:#FFFFFF; --bg-soft:#EFEAE0;
+  --ink:#1F1A14; --ink-soft:#5C544A; --ink-muted:#8E867B;
+  --line:#E2DBCC; --line-soft:#ECE5D5;
+  --accent:#8B4513; --accent-deep:#5C2D0C; --accent-soft:#F5E8D8;
+  --tag-blog:#2D4A3E; --tag-blog-bg:#DCE8E1;
+  --tag-yt:#8B2D2D; --tag-yt-bg:#F0DBD8;
+  --shadow-sm:0 1px 2px rgba(31,26,20,.04);
+  --shadow-md:0 4px 12px rgba(31,26,20,.06);
+  --shadow-lg:0 12px 32px rgba(31,26,20,.08);
+  --r-sm:6px; --r:10px; --r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+
+.page{max-width:980px;margin:0 auto;padding:32px 24px 64px}
+
+.header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;gap:14px}
+.brand-mark{font-family:'Noto Serif KR',serif;font-weight:800;font-size:28px;letter-spacing:-.02em;color:var(--ink)}
+.brand-mark::after{content:'·';margin:0 10px;color:var(--accent)}
+.brand-sub{font-family:'Noto Serif KR',serif;font-weight:400;font-size:18px;color:var(--ink-soft);letter-spacing:-.01em}
+.header-meta{font-size:12px;color:var(--ink-muted);text-align:right;line-height:1.7}
+.header-meta strong{color:var(--ink-soft);font-weight:600}
+
+.section{margin-bottom:24px}
+.section-title{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;padding:0 4px}
+.section-num{font-family:'Noto Serif KR',serif;font-weight:600;font-size:14px;color:var(--accent);letter-spacing:.05em}
+.section-name{font-family:'Noto Serif KR',serif;font-weight:600;font-size:16px;color:var(--ink)}
+.section-meta{font-size:12px;color:var(--ink-muted);margin-left:auto}
+
+.cat-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px;box-shadow:var(--shadow-sm)}
+.cat-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cat-chip{padding:7px 13px;border-radius:999px;background:var(--bg);border:1px solid var(--line);font-size:12.5px;font-weight:500;color:var(--ink-soft);transition:all .12s;white-space:nowrap}
+.cat-chip:hover{border-color:var(--accent);color:var(--accent)}
+.cat-chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cat-chip .count{margin-left:5px;font-size:11px;opacity:.65}
+
+.toggle{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.toggle-head{padding:14px 18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background .12s}
+.toggle-head:hover{background:var(--bg-soft)}
+.toggle-arrow{display:inline-block;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--ink-soft);transition:transform .2s;flex-shrink:0}
+.toggle.open .toggle-arrow{transform:rotate(180deg)}
+.toggle-title{font-family:'Noto Serif KR',serif;font-weight:600;font-size:14px;color:var(--ink);flex:1}
+.toggle-meta{font-size:12px;color:var(--ink-muted)}
+.toggle-body{display:none;border-top:1px solid var(--line-soft)}
+.toggle.open .toggle-body{display:block}
+
+.lib-controls{padding:14px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line-soft);background:var(--bg)}
+.search-box{position:relative;flex:1;min-width:220px}
+.search-box input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--line);border-radius:var(--r-sm);background:#fff;font-size:13px;transition:border .15s}
+.search-box input:focus{outline:none;border-color:var(--accent)}
+.search-box::before{content:'';position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%238E867B' stroke-width='1.6'><circle cx='7' cy='7' r='5'/><line x1='11' y1='11' x2='14' y2='14' stroke-linecap='round'/></svg>");background-repeat:no-repeat}
+.type-toggle{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:var(--r-sm);padding:2px;gap:2px}
+.type-toggle button{padding:6px 11px;font-size:12px;font-weight:600;border-radius:5px;color:var(--ink-soft);transition:all .12s}
+.type-toggle button.on{background:var(--ink);color:#fff}
+.btn-secondary{padding:7px 13px;border:1px solid var(--line);border-radius:var(--r-sm);background:#fff;font-size:12px;font-weight:600;color:var(--ink-soft);transition:all .12s;white-space:nowrap}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+.btn-secondary.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.list{max-height:420px;overflow-y:auto}
+.list::-webkit-scrollbar{width:8px}
+.list::-webkit-scrollbar-track{background:transparent}
+.list::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+
+.item{display:flex;gap:12px;padding:12px 18px;border-bottom:1px solid var(--line-soft);cursor:pointer;transition:background .12s}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--bg-soft)}
+.item.selected{background:var(--accent-soft)}
+.item-check{width:18px;height:18px;border:1.5px solid var(--line);border-radius:5px;flex-shrink:0;margin-top:2px;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.item.selected .item-check{background:var(--accent);border-color:var(--accent)}
+.item.selected .item-check::after{content:'';width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.item-body{flex:1;min-width:0}
+.item-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em}
+.tag.blog{background:var(--tag-blog-bg);color:var(--tag-blog)}
+.tag.yt{background:var(--tag-yt-bg);color:var(--tag-yt)}
+.cat-label{font-size:11px;color:var(--ink-muted);font-weight:500}
+.item-title{font-size:13.5px;color:var(--ink);line-height:1.5;font-weight:500;word-break:keep-all}
+.item-link{font-size:11px;color:var(--ink-muted);margin-top:3px;font-family:ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+
+.empty{padding:50px 24px;text-align:center;color:var(--ink-muted);font-size:13px}
+
+.sel-preview{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-lg);padding:14px 18px;box-shadow:var(--shadow-sm)}
+.sel-preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sel-count{font-size:13px;color:var(--ink-soft);font-weight:600}
+.sel-count strong{color:var(--accent);font-weight:700;font-size:14px}
+.sel-count .sub{font-size:11.5px;color:var(--ink-muted);font-weight:400;margin-left:6px}
+.clear-btn{font-size:11.5px;color:var(--ink-muted);font-weight:500;text-decoration:underline;text-underline-offset:2px}
+.clear-btn:hover{color:var(--accent)}
+.sel-list{max-height:200px;overflow-y:auto;margin:0 -18px 0;padding:0 18px}
+.sel-empty{font-size:12.5px;color:var(--ink-muted);text-align:center;padding:20px 12px;border:1px dashed var(--line);border-radius:var(--r-sm);background:var(--bg)}
+.sel-item{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--line-soft);font-size:12.5px;align-items:flex-start}
+.sel-item:last-child{border-bottom:none}
+.sel-item-text{flex:1;line-height:1.45;color:var(--ink-soft);word-break:keep-all}
+.sel-item-text strong{color:var(--ink);font-weight:500}
+.sel-remove{flex-shrink:0;width:20px;height:20px;border-radius:4px;color:var(--ink-muted);font-size:16px;line-height:1;transition:all .12s}
+.sel-remove:hover{background:var(--tag-yt-bg);color:var(--tag-yt)}
+
+.msg-panel{background:var(--bg-card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow-sm);overflow:hidden}
+.msg-head{padding:12px 18px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,#FFFCF5 0%,#FBF6E8 100%);border-bottom:1px solid var(--line-soft);gap:10px;flex-wrap:wrap}
+.msg-head-title{font-size:13px;color:var(--ink-soft)}
+.msg-head-title strong{color:var(--accent);font-weight:700}
+.msg-help{font-size:11.5px;color:var(--ink-muted);text-align:right;line-height:1.6}
+.msg-help code{background:var(--bg);padding:1px 5px;border-radius:3px;font-size:10.5px;color:var(--accent-deep);font-family:ui-monospace,monospace;font-weight:600}
+.msg-textarea{width:100%;min-height:380px;padding:18px;border:none;background:#fff;font-size:13.5px;line-height:1.7;color:var(--ink);resize:vertical;font-family:inherit;word-break:keep-all;display:block}
+.msg-textarea:focus{outline:none;background:#FFFEF9}
+.msg-actions{padding:12px 18px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line-soft);background:var(--bg);align-items:center}
+.btn-primary{padding:10px 18px;background:var(--accent);color:#fff;border-radius:var(--r-sm);font-weight:700;font-size:13px;letter-spacing:.02em;transition:all .15s}
+.btn-primary:hover{background:var(--accent-deep)}
+.btn-primary:disabled{background:var(--ink-muted);cursor:not-allowed;opacity:.5}
+.btn-ghost{padding:10px 14px;background:#fff;color:var(--ink-soft);border:1px solid var(--line);border-radius:var(--r-sm);font-weight:600;font-size:12.5px;transition:all .12s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.saved-list{padding:8px 0}
+.saved-empty{padding:30px 24px;text-align:center;color:var(--ink-muted);font-size:13px}
+.saved-row{display:flex;gap:10px;padding:12px 18px;border-bottom:1px solid var(--line-soft);align-items:flex-start;transition:background .12s}
+.saved-row:last-child{border-bottom:none}
+.saved-row:hover{background:var(--bg-soft)}
+.saved-info{flex:1;min-width:0}
+.saved-meta{font-size:11.5px;color:var(--ink-muted);margin-bottom:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.saved-cat{padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent-deep);font-weight:700;font-size:10.5px;letter-spacing:.03em}
+.saved-preview{font-size:13px;color:var(--ink);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.saved-actions{display:flex;gap:6px;flex-shrink:0}
+.saved-btn{padding:5px 10px;font-size:11.5px;border:1px solid var(--line);border-radius:4px;background:#fff;color:var(--ink-soft);font-weight:600;transition:all .12s}
+.saved-btn:hover{border-color:var(--accent);color:var(--accent)}
+.saved-btn.danger:hover{border-color:var(--tag-yt);color:var(--tag-yt)}
+.saved-toolbar{padding:10px 18px;background:var(--bg);border-bottom:1px solid var(--line-soft);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+.modal-bg{position:fixed;inset:0;background:rgba(31,26,20,.5);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal-bg.show{display:flex}
+.modal{background:var(--bg-card);border-radius:var(--r-lg);max-width:760px;width:100%;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden}
+.modal-head{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.modal-title{font-family:'Noto Serif KR',serif;font-weight:600;font-size:16px;color:var(--ink)}
+.modal-close{width:30px;height:30px;font-size:20px;color:var(--ink-muted);border-radius:6px;line-height:1;transition:all .12s}
+.modal-close:hover{background:var(--bg-soft);color:var(--ink)}
+.modal-body{padding:20px 22px;overflow-y:auto;flex:1}
+.modal-foot{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:var(--bg)}
+.detail-text{white-space:pre-wrap;background:var(--bg);padding:18px;border-radius:var(--r-sm);font-size:13.5px;line-height:1.75;color:var(--ink);word-break:keep-all;border:1px solid var(--line-soft)}
+.detail-meta{font-size:12.5px;color:var(--ink-muted);margin-bottom:12px}
+.detail-meta strong{color:var(--ink-soft);font-weight:600}
+
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:var(--r);font-size:13px;font-weight:500;opacity:0;transition:all .25s;pointer-events:none;z-index:300;box-shadow:var(--shadow-lg)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:640px){
+  .page{padding:20px 14px 32px}
+  .header{flex-direction:column;align-items:flex-start;gap:8px}
+  .brand-mark{font-size:22px}
+  .header-meta{text-align:left}
+  .lib-controls{flex-direction:column;align-items:stretch}
+  .search-box{min-width:0}
+  .msg-help{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="header">
+    <div class="brand">
+      <div class="brand-mark">컨빌</div>
+      <div class="brand-sub">컨텐츠 응대 자동화</div>
+    </div>
+    <div class="header-meta">
+      <strong id="totalCount">269</strong>건 · 블로그 181 · 유튜브 88<br>
+      디자인을 파는 것이 아닌, 꿈을 팝니다
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="section-title">
+      <span class="section-num">01</span>
+      <span class="section-name">카테고리 선택</span>
+      <span class="section-meta" id="catMeta">전체</span>
+    </div>
+    <div class="cat-panel">
+      <div class="cat-chips" id="catChips"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <span class="section-num">02</span>
+      <span class="section-name">컨텐츠 선택</span>
+      <span class="section-meta">블로그 <span id="blogCountInline" style="color:var(--tag-blog);font-weight:700">0</span> · 유튜브 <span id="ytCountInline" style="color:var(--tag-yt);font-weight:700">0</span></span>
+    </div>
+    <div class="toggle" id="libToggle">
+      <div class="toggle-head" onclick="toggleLib()">
+        <span class="toggle-arrow"></span>
+        <span class="toggle-title">컨텐츠 라이브러리</span>
+        <span class="toggle-meta" id="libMeta">269건 · 클릭하여 펼치기</span>
+      </div>
+      <div class="toggle-body">
+        <div class="lib-controls">
+          <div class="search-box">
+            <input type="text" id="search" placeholder="제목으로 검색 (예: 고깃집, 반셀프)">
+          </div>
+          <div class="type-toggle" id="typeToggle">
+            <button data-type="all" class="on">전체</button>
+            <button data-type="블로그">블로그</button>
+            <button data-type="유튜브">유튜브</button>
+          </div>
+          <button class="btn-secondary" id="selectAllBtn" onclick="selectAllVisible()">현재 보이는 항목 전체 선택</button>
+        </div>
+        <div class="list" id="list"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px"></div>
+
+    <div class="sel-preview">
+      <div class="sel-preview-head">
+        <span class="sel-count">선택된 컨텐츠 <strong id="selCount">0</strong>건<span class="sub" id="selBreakdown"></span></span>
+        <button class="clear-btn" onclick="clearAll()">전체 비우기</button>
+      </div>
+      <div class="sel-list" id="selList">
+        <div class="sel-empty">위에서 컨텐츠 라이브러리를 펼쳐 항목을 선택하세요</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <span class="section-num">03</span>
+      <span class="section-name">메시지</span>
+      <span class="section-meta" id="msgCatLabel">전체</span>
+    </div>
+    <div class="msg-panel">
+      <div class="msg-head">
+        <div class="msg-head-title">
+          <strong id="msgCatBadge">전체</strong> 카테고리 템플릿
+        </div>
+        <div class="msg-help">
+          <code>{{BLOG_LINKS}}</code> = 선택한 블로그 ·
+          <code>{{YOUTUBE_LINKS}}</code> = 선택한 유튜브
+        </div>
+      </div>
+      <textarea class="msg-textarea" id="msgArea" placeholder="이 카테고리의 메시지 템플릿이 여기에 로드됩니다."></textarea>
+      <div class="msg-actions">
+        <button class="btn-primary" onclick="copyMessage()">📋 메시지 복사</button>
+        <button class="btn-ghost" onclick="saveMessage()">💾 보관함에 저장</button>
+        <button class="btn-ghost" onclick="saveTemplate()">📌 이 내용을 템플릿으로 저장</button>
+        <button class="btn-ghost" onclick="resetTemplate()" style="margin-left:auto;color:var(--ink-muted)">↺ 기본값으로</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">
+      <span class="section-num">04</span>
+      <span class="section-name">저장된 메시지</span>
+      <span class="section-meta"><span id="savedCount">0</span>건 보관됨</span>
+    </div>
+    <div class="toggle" id="savedToggle">
+      <div class="toggle-head" onclick="toggleSaved()">
+        <span class="toggle-arrow"></span>
+        <span class="toggle-title">메시지 보관함</span>
+        <span class="toggle-meta">생성한 메시지 기록 · 다운로드 가능</span>
+      </div>
+      <div class="toggle-body">
+        <div class="saved-toolbar">
+          <span style="font-size:12px;color:var(--ink-muted)" id="savedInfo">아직 저장된 메시지가 없습니다</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn-secondary" onclick="downloadAll()">📥 전체 다운로드 (.txt)</button>
+            <button class="btn-secondary" onclick="exportJSON()">⤓ JSON 백업</button>
+            <button class="btn-secondary" onclick="clearAllSaved()" style="color:var(--tag-yt)">🗑 전체 삭제</button>
+          </div>
+        </div>
+        <div class="saved-list" id="savedList"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <span class="modal-title">저장된 메시지</span>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-meta" id="detailMeta"></div>
+      <div class="detail-text" id="detailText"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="copyDetail()">📋 복사</button>
+      <button class="btn-primary" onclick="closeModal()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DATA = [{"type":"블로그","category":"카페·디저트","title":"프랜차이즈 카페 리모델링, 소형 매장에서 존재감 만드는 법","url":"https://blog.naver.com/convil_interior/224113235059"},{"type":"블로그","category":"카페·디저트","title":"1층은 카페, 2층은 실내 수직농장｜수직농장 카페 인테리어로 완성한 스마트팜 카페!","url":"https://blog.naver.com/convil_interior/224127592701"},{"type":"블로그","category":"카페·디저트","title":"동탄 브런치카페 인테리어, 유럽 감성에 한국적 디테일을 더하다!","url":"https://blog.naver.com/convil_interior/224010125189"},{"type":"블로그","category":"카페·디저트","title":"남양주 프랜차이즈 카페, 반셀프인테리어로 카페창업하기","url":"https://blog.naver.com/convil_interior/223685741885"},{"type":"블로그","category":"카페·디저트","title":"강남 카페 오씨씨, 강남 인테리어디자인 잘하는 곳, 파이프인테리어","url":"https://blog.naver.com/convil_interior/223151964097"},{"type":"블로그","category":"카페·디저트","title":"강원도 춘천 신축건물 프렌차이즈 카페 리모델링 컨설팅 투시도 제작","url":"https://blog.naver.com/convil_interior/223278523337"},{"type":"블로그","category":"카페·디저트","title":"반셀프인테리어 직영공사 후기 (feat. 수원플라워카페)","url":"https://blog.naver.com/convil_interior/223274603595"},{"type":"블로그","category":"카페·디저트","title":"카페 반셀프인테리어 ,로고제작  한번에 끝내드린 후기","url":"https://blog.naver.com/convil_interior/223396188906"},{"type":"블로그","category":"카페·디저트","title":"15평 카페인테리어 디자인 고객후기가 대단합니다","url":"https://blog.naver.com/convil_interior/223062251665"},{"type":"블로그","category":"음식점","title":"영등포 쌀국수집 인테리어｜셀프 쌀국수집에 휴양지 감성을 더한 플랜테리어 식당","url":"https://blog.naver.com/convil_interior/224131895260"},{"type":"블로그","category":"음식점","title":"아르헨티나 고깃집 인테리어 사례로 보는 정통 고깃집 디자인 전략","url":"https://blog.naver.com/convil_interior/224113229090"},{"type":"블로그","category":"음식점","title":"화성 고깃집 인테리어, 기존 가구 재활용으로 리모델링 공사비용 절약!","url":"https://blog.naver.com/convil_interior/224018964370"},{"type":"블로그","category":"음식점","title":"영종도 횟집 인테리어 트렌드, 인천 45평 활어횟집 상가 인테리어 디자인 사례","url":"https://blog.naver.com/convil_interior/224145166890"},{"type":"블로그","category":"음식점","title":"종로 족발덮밥집 인테리어, 시안부터 완공까지｜상업공간 인테리어, 이렇게 준비하세요","url":"https://blog.naver.com/convil_interior/224161557548"},{"type":"블로그","category":"음식점","title":"프랜차이즈 횟집은 어떻게 완성될까? 인천 영종도 횟집 인테리어 시공 사례 이야기","url":"https://blog.naver.com/convil_interior/224170153536"},{"type":"블로그","category":"음식점","title":"음식점 창업 인테리어 어디서부터 시작해야 할까? 실제 음식점 창업 사례로 알아보기","url":"https://blog.naver.com/convil_interior/224219680082"},{"type":"블로그","category":"음식점","title":"트렌디한 횟집 인테리어,  프랜차이즈 리뉴얼 디자인으로 전국 매장확장","url":"https://blog.naver.com/convil_interior/223507318783"},{"type":"블로그","category":"음식점","title":"부평 고깃집 반셀프인테리어로 30%비용절약한 시공후기","url":"https://blog.naver.com/convil_interior/223607819265"},{"type":"블로그","category":"음식점","title":"강남 특색있는 고깃집, 산장&캠핑장 컨셉의 인테리어","url":"https://blog.naver.com/convil_interior/223608384325"},{"type":"블로그","category":"음식점","title":"홍콩 오마카세 고깃집, 리모델링 3D  디자인 투시도","url":"https://blog.naver.com/convil_interior/223500275105"},{"type":"블로그","category":"음식점","title":"고깃집 브랜딩, 로고제작 한번에 인테리어하기","url":"https://blog.naver.com/convil_interior/223434743597"},{"type":"블로그","category":"음식점","title":"60평대 고깃집 인테리어 비용 완전 싸게 하고 대성공한 썰 (feat. 반셀프인테리어)","url":"https://blog.naver.com/convil_interior/223430369709"},{"type":"블로그","category":"음식점","title":"치킨집 프랜차이즈 인테리어,  본사에서 연락와서 인테리어 브랜딩까지 진행해드렸습니다 !","url":"https://blog.naver.com/convil_interior/223446425224"},{"type":"블로그","category":"음식점","title":"24시 김치찌개 프랜차이즈, 효과적인 인테리어로 승부하자","url":"https://blog.naver.com/convil_interior/223447084215"},{"type":"블로그","category":"음식점","title":"한식 프랜차이즈 창업? 인테리어 브랜딩까지 !","url":"https://blog.naver.com/convil_interior/223687518225"},{"type":"블로그","category":"음식점","title":"레스토랑 반셀프인테리어 전문 업체추천 투명한 견적과 예산에 딱 맞게 인테리어 하는 법","url":"https://blog.naver.com/convil_interior/223390223008"},{"type":"블로그","category":"음식점","title":"스시집 프랜차이즈, 캐나다에서 목재컨셉으로 반셀프인테리어 성공 후기!","url":"https://blog.naver.com/convil_interior/223392728834"},{"type":"블로그","category":"음식점","title":"화성 훠궈뷔페 인테리어 사례｜중국 훠궈집 감성 살린 오픈실링 식당 디자인","url":"https://blog.naver.com/convil_interior/224136703699"},{"type":"블로그","category":"음식점","title":"한식프랜차이즈 성공 비결: 실제 사례 반셀프인테리어 후기","url":"https://blog.naver.com/convil_interior/223708935231"},{"type":"블로그","category":"음식점","title":"24시 한식 식당 인테리어, 프랜차이즈 창업 비용 30% 아끼고 공사 성공한 후기 🔥","url":"https://blog.naver.com/convil_interior/223708580669"},{"type":"블로그","category":"음식점","title":"야외 테라스까지 감성 채운 장어구이집 인테리어, 브랜딩 핵심 포인트는?","url":"https://blog.naver.com/convil_interior/223887349392"},{"type":"블로그","category":"음식점","title":"뷔페형 중식당 인테리어 시공 사례, 훠궈집이 샤브샤브집처럼 보이면 실패입니다","url":"https://blog.naver.com/convil_interior/224202692652"},{"type":"블로그","category":"음식점","title":"샤브샤브 프랜차이즈 성공 비결? 상가 브랜드 디자인에 전략을 쏟아야 합니다","url":"https://blog.naver.com/convil_interior/223404455324"},{"type":"블로그","category":"음식점","title":"고깃집 프랜차이즈 ,리브랜딩 기획 의뢰로 매출 상승시키기!","url":"https://blog.naver.com/convil_interior/223401135405"},{"type":"블로그","category":"음식점","title":"셀프인테리어 현장 컨설팅, 마라탕인테리어 실내투시도 외주 보다 정확하게 완성 될 모습을 확인하기","url":"https://blog.naver.com/convil_interior/223142506091"},{"type":"블로그","category":"음식점","title":"3D도면과 마감재리스트를 이용한 반셀프인테리어 50평 족발집 상가 컨설팅 의뢰","url":"https://blog.naver.com/convil_interior/223174649809"},{"type":"블로그","category":"음식점","title":"브랜드매장디자인 푸드트럭창업 3D 디자인 시안 및 시공후기","url":"https://blog.naver.com/convil_interior/223393893877"},{"type":"블로그","category":"음식점","title":"직영공사 컨설팅 인테리어 비용절약한 상가브랜딩, convil에서 1000만원으로 탕후루 창업하기","url":"https://blog.naver.com/convil_interior/223222112758"},{"type":"블로그","category":"음식점","title":"프랜차이즈 창업 디자인 명객 양꼬치 프랜차이즈 디자인의뢰 작업","url":"https://blog.naver.com/convil_interior/223307523928"},{"type":"블로그","category":"음식점","title":"인테리어비용 20%이상 절감한 반셀프인테리어 의뢰 컨설팅, 더덕순대국브랜드 금례옥 창업 이야기","url":"https://blog.naver.com/convil_interior/223189925833"},{"type":"블로그","category":"술집·바·펍","title":"천안 재즈바 창업 전, 인테리어 디자인 이렇게 해야 실패 안 해요 (feat. 재즈펍)","url":"https://blog.naver.com/convil_interior/223911468076"},{"type":"블로그","category":"술집·바·펍","title":"대흥동 감성술집, 반셀프로 30% 절약한 디자인도면 공개","url":"https://blog.naver.com/convil_interior/223607937778"},{"type":"블로그","category":"술집·바·펍","title":"라운지 & BAR 인테리어 우아함을 담은 대기공간 디자인","url":"https://blog.naver.com/convil_interior/223408883051"},{"type":"블로그","category":"술집·바·펍","title":"레트로 감성이 물씬! 복고풍 포차 인테리어로 손님 맞이하기","url":"https://blog.naver.com/convil_interior/223439304766"},{"type":"블로그","category":"뷰티·미용","title":"부산 향수공방 인테리어, 원데이 클래스겸 사무실로?","url":"https://blog.naver.com/convil_interior/223911512271"},{"type":"블로그","category":"뷰티·미용","title":"뷰티샵 반셀프 인테리어 2가지 느낌으로 컨셉을 잡아서 시안을해드렸어요","url":"https://blog.naver.com/convil_interior/223348337985"},{"type":"블로그","category":"뷰티·미용","title":"영등포상가인테리어, 뷰티샵인테리어를 할 때 모델링 시안까지 꼼꼼하게 디자인해드립니다","url":"https://blog.naver.com/convil_interior/223296665478"},{"type":"블로그","category":"뷰티·미용","title":"뷰티샵을 위한 반셀프 인테리어 출장 서비스 : 디자인과 예산의 완벽한 조화","url":"https://blog.naver.com/convil_interior/223405042300"},{"type":"블로그","category":"뷰티·미용","title":"베이비핑크 컨셉 1인 뷰티샵창업 컨설팅, 인테리어 투시도","url":"https://blog.naver.com/convil_interior/223329332625"},{"type":"블로그","category":"뷰티·미용","title":"압구정 뷰티샵 창업, 반셀프 인테리어로 30% 비용 절감 대성공!!","url":"https://blog.naver.com/convil_interior/223479402259"},{"type":"블로그","category":"뷰티·미용","title":"서울 마포 여성전용 1인 세신샵, 프라이빗한 인테리어","url":"https://blog.naver.com/convil_interior/223500996867"},{"type":"블로그","category":"뷰티·미용","title":"화장품 매장 브랜드를 위한 맞춤형 인테리어 디자인","url":"https://blog.naver.com/convil_interior/223708944534"},{"type":"블로그","category":"뷰티·미용","title":"뷰티샵 인테리어 디자인 제작 , 이렇게 잘한다고?","url":"https://blog.naver.com/convil_interior/223708951591"},{"type":"블로그","category":"뷰티·미용","title":"뷰티세신샵 인테리어 | 실력 있는 시공사와 컨빌디자인이 함께 만든 공간, 지금 확인해보세요!","url":"https://blog.naver.com/convil_interior/223861611961"},{"type":"블로그","category":"뷰티·미용","title":"제주도 미용실 인테리어, 디자인부터!","url":"https://blog.naver.com/convil_interior/223640110097"},{"type":"블로그","category":"뷰티·미용","title":"뷰티세신샵 창업 반셀프인테리어 , 무려 3000만원 절약한 공사","url":"https://blog.naver.com/convil_interior/223632033807"},{"type":"블로그","category":"뷰티·미용","title":"마사지샵 창업 , 깔끔한 화이트 톤으로 시선을 사로잡기","url":"https://blog.naver.com/convil_interior/223116595147"},{"type":"블로그","category":"뷰티·미용","title":"연남동 에스테틱 인테리어, 분위기 좋은 피부관리샵은 뭐가 다를까?","url":"https://blog.naver.com/convil_interior/224121383464"},{"type":"블로그","category":"뷰티·미용","title":"필리핀 BGC에 들어서는 프리미엄 스파, 해외 상업공간 인테리어로 완성한 프라이빗 스파의 기준","url":"https://blog.naver.com/convil_interior/224170109193"},{"type":"블로그","category":"뷰티·미용","title":"세라젬 힐링 마사지 카페 창업 인테리어, 고급 매장에서 가장 많이 하는 쇼윈도 디자인 실수","url":"https://blog.naver.com/convil_interior/224202608035"},{"type":"블로그","category":"운동·스포츠","title":"60평 헬스장, 반셀프인테리어로 비용줄이는 꿀팁 공개","url":"https://blog.naver.com/convil_interior/223423168666"},{"type":"블로그","category":"운동·스포츠","title":"봉천동 36평 필라테스 인테리어 디자인｜반셀프 인테리어로 바로 시공 가능한 디자인 설계","url":"https://blog.naver.com/convil_interior/224145168250"},{"type":"블로그","category":"운동·스포츠","title":"종로 필라테스 인테리어, 운동공간 인테리어의 정석","url":"https://blog.naver.com/convil_interior/224068216955"},{"type":"블로그","category":"운동·스포츠","title":"헬스장에 실내 골프 연습장이 함께 있다고? 시흥 헬스장 인테리어, 스포츠시설 인테리어의 새로운 조합","url":"https://blog.naver.com/convil_interior/224161403166"},{"type":"블로그","category":"운동·스포츠","title":"시안이 기준이 되면 공사가 편해집니다｜봉천동 필라테스 인테리어 시공 사례","url":"https://blog.naver.com/convil_interior/224153340364"},{"type":"블로그","category":"운동·스포츠","title":"시흥 파크골프장 인테리어 사례｜400평 실내 파크골프 공간은 이렇게 만들어졌습니다","url":"https://blog.naver.com/convil_interior/224153187702"},{"type":"블로그","category":"운동·스포츠","title":"봉천동 필라테스 인테리어 디자인, 기구 세팅까지 계산한 필라테스 스튜디오 완성본","url":"https://blog.naver.com/convil_interior/224181478424"},{"type":"블로그","category":"운동·스포츠","title":"헬스장과 사우나 인테리어 운동열정을 불러일으키는 스타일링 전략","url":"https://blog.naver.com/convil_interior/223408853277"},{"type":"블로그","category":"운동·스포츠","title":"실내 스크린 골프장 인테리어,  3D디자인은 믿고보는 컨빌에서 !","url":"https://blog.naver.com/convil_interior/223477318598"},{"type":"블로그","category":"운동·스포츠","title":"실내골프연습장과 피트니스를 한번에? 복합운동공간 창업, 인테리어 전략이 핵심!","url":"https://blog.naver.com/convil_interior/223875848714"},{"type":"블로그","category":"운동·스포츠","title":"필라테스샵 인테리어 비용 줄이는 똑똑한 창업 전략","url":"https://blog.naver.com/convil_interior/223900197914"},{"type":"블로그","category":"의료시설","title":"여성 병원 리모델링 3D 디자인으로 시각화하기","url":"https://blog.naver.com/convil_interior/223708919257"},{"type":"블로그","category":"의료시설","title":"안양 치과 인테리어, 3D 디자인으로 공사비용 아끼기","url":"https://blog.naver.com/convil_interior/223934658929"},{"type":"블로그","category":"의료시설","title":"150평대 산후조리원 인테리어, 신생아실, 산모실, 편의시설 등 3d 디자인으로 한눈에 확인하기 ! (고객님께서 대만족 하신 썰)","url":"https://blog.naver.com/convil_interior/223475127222"},{"type":"블로그","category":"의료시설","title":"병원 리모델링 고민이라면? 산후조리원과 산부인과 인테리어 리뉴얼 핵심정리","url":"https://blog.naver.com/convil_interior/223861667284"},{"type":"블로그","category":"의료시설","title":"한의원 인테리어, 시흥시에 위치한 한의원 리모델링 _ 우드톤 컨셉의 로비 디자인","url":"https://blog.naver.com/convil_interior/224040805947"},{"type":"블로그","category":"사무실·오피스","title":"우드화이트 인테리어 투시도 제작으로 사무실공사 완벽하게 하기","url":"https://blog.naver.com/convil_interior/223356701664"},{"type":"블로그","category":"사무실·오피스","title":"사무실인테리어 3d 시안과 실제 리모델링 현장을 비교해 보시고 대만족 하셨습니다","url":"https://blog.naver.com/convil_interior/223388597838"},{"type":"블로그","category":"사무실·오피스","title":"여행의 시작을 디자인하는 여행사 사무실 인테리어 3D투시도","url":"https://blog.naver.com/convil_interior/223386555319"},{"type":"블로그","category":"사무실·오피스","title":"사무실인테리어를 원할때 진행과정을 디테일하게 보여드립니다","url":"https://blog.naver.com/convil_interior/223298884348"},{"type":"블로그","category":"사무실·오피스","title":"멀티 컨셉룸으로 탈바꿈하기 ! 태국 에이전시 사무실에서 선보이는 뮤직룸, 경찰서 컨셉 인테리어","url":"https://blog.naver.com/convil_interior/223408534375"},{"type":"블로그","category":"사무실·오피스","title":"인도 뉴델리 사옥의 인테리어 리모델링 디자인, 세련된 사옥으로 대변신!","url":"https://blog.naver.com/convil_interior/223447675372"},{"type":"블로그","category":"사무실·오피스","title":"사무실 인테리어 업무효율이 높아지게끔 하는 공간으로 대변신","url":"https://blog.naver.com/convil_interior/223408844210"},{"type":"블로그","category":"사무실·오피스","title":"350평 규모의 태국 에이전시 사무실, 과일가게부터 꽃집까지 다기능 컨셉룸 디자인","url":"https://blog.naver.com/convil_interior/223408486845"},{"type":"블로그","category":"사무실·오피스","title":"부산 사옥 인테리어 사무실 리모델링, 효율적인 공간 활용과 세련된 디자인","url":"https://blog.naver.com/convil_interior/223489424058"},{"type":"블로그","category":"사무실·오피스","title":"세무사 사무실 인테리어, 깔끔하고 효율적인 공간으로!","url":"https://blog.naver.com/convil_interior/223708869901"},{"type":"블로그","category":"사무실·오피스","title":"사무실 리모델링 다양한 버전의 선택지가 있는 시공사례","url":"https://blog.naver.com/convil_interior/223432195804"},{"type":"블로그","category":"사무실·오피스","title":"판교 100평대 사무실 인테리어, 이렇게 바뀔 수 있습니다 (비포&애프터 공개!)","url":"https://blog.naver.com/convil_interior/223861656237"},{"type":"블로그","category":"사무실·오피스","title":"강남 변호사 사무실 인테리어, 우드톤 인테리어로 완성한 깔끔한 오피스 인테리어!","url":"https://blog.naver.com/convil_interior/224068233768"},{"type":"블로그","category":"사무실·오피스","title":"사무실 동선 설계, 일 잘되는 공간은 이렇게 만듭니다","url":"https://blog.naver.com/convil_interior/224228120845"},{"type":"블로그","category":"사무실·오피스","title":"부산 60평대 사무실 인테리어, 따뜻한 감성의 오피스 리모델링 노하우","url":"https://blog.naver.com/convil_interior/224113241347"},{"type":"블로그","category":"사무실·오피스","title":"스타트업 사무실 인테리어, 예산 낭비 막는 사무실 인테리어 팁 5가지","url":"https://blog.naver.com/convil_interior/224211303283"},{"type":"블로그","category":"사무실·오피스","title":"창원 복층 사무실 인테리어?  넓어보이는 디자인으로 완성  (실제 공사완료 사진 공개)","url":"https://blog.naver.com/convil_interior/223918513893"},{"type":"블로그","category":"사무실·오피스","title":"인천 사무실 인테리어, 오피스 리모델링 잘하는 업체! 컨빌디자인","url":"https://blog.naver.com/convil_interior/224023888064"},{"type":"블로그","category":"사무실·오피스","title":"양재 사무실 인테리어 오피스 리모델링 비용, 절반 줄이는 비밀 공개!","url":"https://blog.naver.com/convil_interior/223983937952"},{"type":"블로그","category":"사무실·오피스","title":"양재 사무실 인테리어! 오피스 임대 전 , 이 업체 보고 결정하세요! 리모델링 고민 끝","url":"https://blog.naver.com/convil_interior/223958559163"},{"type":"블로그","category":"사무실·오피스","title":"모델에이전시 사무실 인테리어 시안 외주로 깔끔하게 디자인 해드렸습니다","url":"https://blog.naver.com/convil_interior/223316524141"},{"type":"블로그","category":"사무실·오피스","title":"사무실 아이소메트릭 외주 ,인테리어외주전문 ! 고객200%만족 후기","url":"https://blog.naver.com/convil_interior/223057426780"},{"type":"블로그","category":"사무실·오피스","title":"따듯하고 싱그러운 여행사 사무실 디자인, 클럽메드 리조트 사무실","url":"https://blog.naver.com/convil_interior/223387278917"},{"type":"블로그","category":"교육공간","title":"대학교 연구실도 인테리어가 필요합니다｜연세대학교 연구실 리모델링 & 랩실 인테리어 사례","url":"https://blog.naver.com/convil_interior/224121386774"},{"type":"블로그","category":"교육공간","title":"남산타워 링크드인 스터디카페 프랜차이즈 창업 문의, 현장을 반영한 실내 3D도면으로 완성도있는 공사","url":"https://blog.naver.com/convil_interior/223225593048"},{"type":"블로그","category":"교육공간","title":"광주 영어 학원 인테리어｜프리미엄 학원 인테리어를 반셀프로 완성한 리모델링 사례","url":"https://blog.naver.com/convil_interior/224136701601"},{"type":"블로그","category":"교육공간","title":"서울 스터디카페 인테리어, 집중력을 높인 스터디 카페 디자인","url":"https://blog.naver.com/convil_interior/224068264934"},{"type":"블로그","category":"교육공간","title":"강남 학원인테리어 문의, 출장 컨설팅 3D디자인","url":"https://blog.naver.com/convil_interior/223382384392"},{"type":"블로그","category":"종교시설","title":"광주 교회 인테리어, 교회리모델링 후 완벽 변신한 성공 비결 공개!","url":"https://blog.naver.com/convil_interior/223981878925"},{"type":"블로그","category":"종교시설","title":"성도들 설득이 걱정된다면, 서광주 교회인테리어 디자인 성공사례 참고하세요!","url":"https://blog.naver.com/convil_interior/223958654191"},{"type":"블로그","category":"종교시설","title":"교회 디자인, 성당 설계 문의 감성을 한 스푼 넣어 감각적으로","url":"https://blog.naver.com/convil_interior/223373625454"},{"type":"블로그","category":"종교시설","title":"부산 제8영도 교회리모델링, 스터디카페가 있는 교회인테리어!","url":"https://blog.naver.com/convil_interior/223981656287"},{"type":"블로그","category":"종교시설","title":"광주 교회 내부 인테리어, 완공된 현장 보시고 소개연락이 또 왔습니다!","url":"https://blog.naver.com/convil_interior/223506639354"},{"type":"블로그","category":"종교시설","title":"교회 외관디자인을 바꾸시고 싶다면? 3D투시도로 미리보기","url":"https://blog.naver.com/convil_interior/223489014568"},{"type":"블로그","category":"종교시설","title":"부산 교회 인테리어 디자인, 소통과 수정 과정을 통해 완성한 교회 리모델링","url":"https://blog.naver.com/convil_interior/224181423083"},{"type":"블로그","category":"주거공간","title":"좁은 화장실 리모델링 스타일링 꿀팁! 이렇게 공사하세요!","url":"https://blog.naver.com/convil_interior/223907897506"},{"type":"블로그","category":"주거공간","title":"공주 단독주택 인테리어의 정석! 한옥풍 감성을 담은 단독주택 리모델링","url":"https://blog.naver.com/convil_interior/224005363780"},{"type":"블로그","category":"주거공간","title":"송파구 32평 아파트 리모델링 인테리어, 이건 정말 잘했다!","url":"https://blog.naver.com/convil_interior/224023931473"},{"type":"블로그","category":"주거공간","title":"천안 모종동 주택 리모델링, 디테일의 차이가 만든 특별한 공간","url":"https://blog.naver.com/convil_interior/224028363593"},{"type":"블로그","category":"주거공간","title":"부산 연제구 3층 주택 리모델링 꿀팁, 예산 절감부터 배치까지!","url":"https://blog.naver.com/convil_interior/223918490093"},{"type":"블로그","category":"숙박시설","title":"종로 호스텔 인테리어｜한국적 감성으로 완성한 스테이 인테리어","url":"https://blog.naver.com/convil_interior/224136702756"},{"type":"블로그","category":"숙박시설","title":"부산해운대 호텔에 디자인외주로 2가지 컨셉으로 진행완료","url":"https://blog.naver.com/convil_interior/223313319499"},{"type":"블로그","category":"숙박시설","title":"감성숙소 창업 준비한다면 꼭 보세요, 숙소 인테리어 설계 과정으로 배우는 에어비앤비 창업하기","url":"https://blog.naver.com/convil_interior/224211386100"},{"type":"블로그","category":"숙박시설","title":"한옥 펜션 리모델링, 전통의 멋을 살린 한옥 인테리어 성공 노하우","url":"https://blog.naver.com/convil_interior/224011904951"},{"type":"블로그","category":"숙박시설","title":"방배 에어비앤비 인테리어, 도심 속에서 누리는 여름 휴양지 감성 스타일링","url":"https://blog.naver.com/convil_interior/223907860070"},{"type":"블로그","category":"숙박시설","title":"나만의 공간 서울 아지트 숙소, 어떻게 인테리어 해볼까?","url":"https://blog.naver.com/convil_interior/223686394821"},{"type":"블로그","category":"숙박시설","title":"호텔룸 리모델링 성공 사례! 고객 니즈를 반영한 공간 디자인 꿀팁","url":"https://blog.naver.com/convil_interior/223708420298"},{"type":"블로그","category":"숙박시설","title":"경주펜션 인테리어 디자인, 마감재리스트까지 제공!","url":"https://blog.naver.com/convil_interior/223685726782"},{"type":"블로그","category":"숙박시설","title":"에어비엔비 인테리어? 펜션느낌 물씬나는 숙박리모델링","url":"https://blog.naver.com/convil_interior/223934741470"},{"type":"블로그","category":"무인매장","title":"경북 무인카페 인테리어, 반셀프로 성공하는 비법은 \"도면\"에 있다 !?","url":"https://blog.naver.com/convil_interior/223607875709"},{"type":"블로그","category":"무인매장","title":"무인 디저트카페 창업, 인테리어부터 브랜딩까지 올인원으로!","url":"https://blog.naver.com/convil_interior/224091382060"},{"type":"블로그","category":"무인매장","title":"무인매장 인테리어 비용, 반셀프로 얼마나 줄일 수 있을까요?","url":"https://blog.naver.com/convil_interior/224227998879"},{"type":"블로그","category":"무인매장","title":"요즘 대세 무인창업! 특색있는 무인문구점 디자인으로 매출까지 잡자!","url":"https://blog.naver.com/convil_interior/223900173094"},{"type":"블로그","category":"무인매장","title":"현장실측으로 완성도 높은 무인문방구창업","url":"https://blog.naver.com/convil_interior/223092382097"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"STEK 쇼룸 인테리어 디자인 현대적이고 투시도제작 원하신다면","url":"https://blog.naver.com/convil_interior/223301464453"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"stek 글로벌 프리미엄 쇼룸 PPF샵 디자인 3D투시도 제작 , 인테리어브랜딩외주","url":"https://blog.naver.com/convil_interior/223282949819"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"신세계 백화점 수영복 매장 인테리어 제안서, 합격 비밀 공개! (팝업 부스 인테리어)","url":"https://blog.naver.com/convil_interior/224011928480"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"부산 크리스마스빌리지 가쓰나 부스 위치 안내｜부산시와인 가쓰나 부스 제작 과정 공개","url":"https://blog.naver.com/convil_interior/224115234160"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"젤라또 프랜차이즈, 아쿠아리움을 빛내는 독특한 부스 디자인","url":"https://blog.naver.com/convil_interior/223459255755"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"젤라또 프랜차이즈를 위한 매력적인 부스 디자인","url":"https://blog.naver.com/convil_interior/223459378282"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"서울 백화점 시계 브랜드관, 리뉴얼할땐 여기서 하면 됩니다","url":"https://blog.naver.com/convil_interior/223686105365"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"매출올리는 더현대 백화점 팝업매장 인테리어","url":"https://blog.naver.com/convil_interior/223608199897"},{"type":"블로그","category":"상업공간·매장·쇼룸·팝업","title":"서비스센터 리모델링, 브랜드 메뉴얼에 맞춘 쇼룸 인테리어 전략","url":"https://blog.naver.com/convil_interior/223911369064"},{"type":"블로그","category":"공공·관공서","title":"주민센터 휴게실 리모델링 / 인테리어외주전문 ★견적 외 3D시안 서비스 제공 ★","url":"https://blog.naver.com/convil_interior/223050843875"},{"type":"블로그","category":"공공·관공서","title":"관공서·공공기관 인테리어 파트너 찾고 계신가요? 부산 헌혈의집 인테리어로 기준을 보여드립니다","url":"https://blog.naver.com/convil_interior/224161501724"},{"type":"블로그","category":"공공·관공서","title":"해운대 우동종합시장 입구 리뉴얼, 부산 관공서 인테리어로 시장의 첫인상을 바꾸다","url":"https://blog.naver.com/convil_interior/224170054404"},{"type":"블로그","category":"레저·체험공간","title":"실내캠핑장 창업? 반셀프 인테리어로 비용 30% 절약 쌉가능 (창원 실내 데이트코스 친구들이랑 놀기 좋은곳 )","url":"https://blog.naver.com/convil_interior/223489040978"},{"type":"블로그","category":"레저·체험공간","title":"실내 캠핑장 창업 현장방문 3D모델링 외주를 통한 반셀프인테리어 의뢰","url":"https://blog.naver.com/convil_interior/223137327851"},{"type":"블로그","category":"레저·체험공간","title":"350평의 대규모 공간이 요즘 유행하는 '컨셉룸 스튜디오'로 탈바꿈 한 소식","url":"https://blog.naver.com/convil_interior/223408584588"},{"type":"블로그","category":"레저·체험공간","title":"천안 모래키즈카페 인테리어, 요즘 가장 인기있는 키즈카페 리모델링 트랜드!","url":"https://blog.naver.com/convil_interior/223958496085"},{"type":"블로그","category":"레저·체험공간","title":"홍대 파티룸 창업 준비 중이라면? 7평 소형 파티룸 인테리어 이렇게 설계하세요","url":"https://blog.naver.com/convil_interior/224181350767"},{"type":"블로그","category":"레저·체험공간","title":"실내캠핑장 인테리어, 감성 캠핑과 캠핑용품 판매까지 한번에!","url":"https://blog.naver.com/convil_interior/223887610796"},{"type":"블로그","category":"레저·체험공간","title":"요즘 핫한 서울 실내 캠핑장 인테리어, 반셀프로 한다면?","url":"https://blog.naver.com/convil_interior/223687424736"},{"type":"블로그","category":"레저·체험공간","title":"350평 대공간에서 실현하는 꿈의공간 :  게임룸부터 공주방, 병원 컨셉까지!","url":"https://blog.naver.com/convil_interior/223408817212"},{"type":"블로그","category":"레저·체험공간","title":"경주 실내캠핑장 창업 준비 중이라면? 인테리어부터 브랜딩까지 한 번에 정리!","url":"https://blog.naver.com/convil_interior/223875639147"},{"type":"블로그","category":"레저·체험공간","title":"300평 규모의 대형 실내캠핑장! 이색적인 인테리어 전략","url":"https://blog.naver.com/convil_interior/223462062410"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"버추얼아이돌 3D 배경화면 외주제작, 플레이브급 퀄리티 가능할까?","url":"https://blog.naver.com/convil_interior/223918083583"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"지원사업 합격을 이끈 인테리어 디자인! 강한소상공인 파트너 컨빌의 비결 브랜드 인테리어 매장 디자인","url":"https://blog.naver.com/convil_interior/223895739790"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"인테리어 디자인 외주, 제대로 해드립니다. (feat. 라운지, 프론트 , 화장실, 파우더룸 디자인)","url":"https://blog.naver.com/convil_interior/223479535895"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"기업 홍보관 인테리어부터 한의원 인테리어까지, 브랜드를 완성하는 공간 브랜딩 사례","url":"https://blog.naver.com/convil_interior/224153256156"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"시공업체 도면의뢰,  3D 인테리어디자인 외주 맡길때 잘하는 곳 찾으시나요?","url":"https://blog.naver.com/convil_interior/223390226750"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"버추얼 아이돌 배경제작 외주업체가 알려주는 성공적인 버튜버 공간 디자인의 비밀","url":"https://blog.naver.com/convil_interior/223844431755"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"3D 인테리어 시안 잘하는 곳 찾으세요 ? (사무실 디자인, 개인 화장실, BAR 인테리어)","url":"https://blog.naver.com/convil_interior/223479943780"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"서울 여의도 사무실, 아이소매트릭 2일이내로 빠르게 제작드렸습니다!","url":"https://blog.naver.com/convil_interior/223505785507"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"스케치업외주 전문 디자이너에게 맡기면 다른 이유","url":"https://blog.naver.com/convil_interior/223074959701"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"프랜차이즈디자인인, 매출상승 할 수 밖에 없는 기획 부터 디자인! 인테리어 +브랜딩","url":"https://blog.naver.com/convil_interior/223130217516"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"[브랜딩컨설팅] 고깃집 프랜차이즈 마케팅 디자인업체에 맡겨야 하는이유","url":"https://blog.naver.com/convil_interior/223149880361"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"차별화된 공간을 제안하는 브랜딩 업체","url":"https://blog.naver.com/convil_interior/223114167488"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"깔끔한 스케치업 모델링","url":"https://blog.naver.com/convil_interior/223087990642"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"캐드 외주 고민일 때! 빠르고 합리적인 비용으로 가능한 곳","url":"https://blog.naver.com/convil_interior/223095273719"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"컨빌디자인에서 시공가능한 3D도면으로 공사 비용 절약하세요!","url":"https://blog.naver.com/convil_interior/223099145941"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"한식프랜차이즈문의 브랜드디자인외주 센스넘치는 디자인으로","url":"https://blog.naver.com/convil_interior/223390132750"},{"type":"블로그","category":"브랜딩·디자인 서비스","title":"프랜차이즈 디자인 잘하는 곳에서 매출 상승하기!","url":"https://blog.naver.com/convil_interior/223132254114"},{"type":"블로그","category":"인테리어 팁·노하우","title":"리셉션 인테리어로 첫인상 개선과 매출 상승 실현하기","url":"https://blog.naver.com/convil_interior/223408826329"},{"type":"블로그","category":"인테리어 팁·노하우","title":"인테리어 비용 아끼는 법?  공사 일정 지연 없이 완공하기, 3D 디자인과 전문가 선택이 핵심!","url":"https://blog.naver.com/convil_interior/223937016670"},{"type":"블로그","category":"인테리어 팁·노하우","title":"3D 인테리어 디자인,  공사 전에 꼭 필요한 이유","url":"https://blog.naver.com/convil_interior/223970590322"},{"type":"블로그","category":"인테리어 팁·노하우","title":"프랜차이즈 인테리어, 본사 디자인 그대로 해야 할까요? (현실 기준 정리)","url":"https://blog.naver.com/convil_interior/224228047775"},{"type":"블로그","category":"인테리어 팁·노하우","title":"건물 리모델링을 통한 부동산 전략! 외관디자인 으로 가치상승","url":"https://blog.naver.com/convil_interior/223686960500"},{"type":"블로그","category":"인테리어 팁·노하우","title":"현장실측 직영공사 의뢰를 통한  소자본창업 전면부 디자인 및 상가 3D도면 제작","url":"https://blog.naver.com/convil_interior/223276487329"},{"type":"블로그","category":"인테리어 팁·노하우","title":"소자본 창업 컨설팅 5천만원아낀 직영공사사례 반셀프인테리어로 공략하자","url":"https://blog.naver.com/convil_interior/223223950951"},{"type":"블로그","category":"인테리어 팁·노하우","title":"상가 3D시안 반셀프인테리어 컨설팅으로 5000만원 창업비용 절약한 공사현장","url":"https://blog.naver.com/convil_interior/223204525081"},{"type":"블로그","category":"인테리어 팁·노하우","title":"상가인테리어비용이 고민일 때?","url":"https://blog.naver.com/convil_interior/223118103601"},{"type":"블로그","category":"인테리어 팁·노하우","title":"강남 반셀프인테리어 , 컨설팅으로 이렇게 바뀔수있다고?","url":"https://blog.naver.com/convil_interior/223120372839"},{"type":"블로그","category":"인테리어 팁·노하우","title":"인테리어 컨설팅으로 원하는 이미지를 심어주고 싶다면","url":"https://blog.naver.com/convil_interior/223110392119"},{"type":"블로그","category":"인테리어 팁·노하우","title":"상가인테리어디자인에 꼭 필요한 단계! 상가설계 전 현장실측","url":"https://blog.naver.com/convil_interior/223055896185"},{"type":"유튜브","category":"카페·디저트","title":"카페 리모델링, 딸기 스마트팜 카페로 변신하다! ｜딸기 수직농장 카페","url":"https://youtu.be/UKoT397QsHM?si=SKZ4WOJi4uyKkNg9"},{"type":"유튜브","category":"카페·디저트","title":"3평짜리 디저트가게에서 시작, 이젠 백화점 팝업까지 진출한 사장님 (feat. ‘놀러갈게’ 조재영 대표)","url":"https://youtu.be/TbPSNxqmjb8?si=nxxytcGBLr9s_Uym"},{"type":"유튜브","category":"카페·디저트","title":"내가 꿈꾸던 플라워카페! ☕️💐 반셀프 인테리어로 창업 성공한 비결✨","url":"https://youtu.be/ScmvBeZnuqs?si=Q9mySsd4ewA7T1jF"},{"type":"유튜브","category":"카페·디저트","title":"카페 창업 성공 꿀팁!☕️ 인테리어 도면부터 시작하는 확실한 방법⭐️","url":"https://youtu.be/sU30jOs7zjs?si=py9Jh_pv5ZQ3z6JM"},{"type":"유튜브","category":"음식점","title":"적은 비용으로 인테리어 창업? 이 방법이면 100% 성공 (셀프 장어구이집)","url":"https://youtu.be/ivL8npgxTiU?si=2WtXx_WHLuyQ2Z9B"},{"type":"유튜브","category":"음식점","title":"고깃집 창업 망하지않는 2가지 조건, ”막막했던 고깃집 인테리어“ 딱 정해줄게 다 들어와 !!!⚠️고깃집 창업자들 필수시청⚠️","url":"https://youtu.be/v2A_iSik-zU?si=KCmI0JRYDMRYtjGu"},{"type":"유튜브","category":"음식점","title":"강남에서 한식창업하고 대박난 비결! 인테리어 비용 확 줄이는 프랜차이즈 창업 꿀팁⭐️","url":"https://youtu.be/Y82qHoI2TlY?si=1rrv6SZbmrfbPG8E"},{"type":"유튜브","category":"음식점","title":"평범한 식당인테리어가 프랜차이즈 되기까지 성공후기 모음 (인테리어비용 2000만원 이상 절약)","url":"https://youtu.be/km3dxbBhiVE?si=dCema3JaWlbfMhkg"},{"type":"유튜브","category":"음식점","title":"차별화된 고깃집 창업🥩 디자인 실패 없이 인테리어 성공하는 방법 ⚠️고깃집창업자 필수시청⚠️","url":"https://youtu.be/EjxRZYxsiBg?si=_INNz_nKumZGTRWP"},{"type":"유튜브","category":"음식점","title":"고깃집 창업 인테리어? 모르면 큰일나는 필수정보 ! ⚠️이거 모르면 호구됩니다.⚠️","url":"https://youtu.be/Lo-CCs8__mI?si=JjUGEgQioIxa5YML"},{"type":"유튜브","category":"음식점","title":"평범한 한식당🍚🥢 인테리어 도면으로 매출 2배! 24시 프랜차이즈 강남에서 살아남기 🔥","url":"https://youtu.be/KZ5vH3KKqas?si=kpqVKk1K5hKq8UIQ"},{"type":"유튜브","category":"음식점","title":"고깃집 매출 두 배로! 손님들이 줄 서는 고깃집인테리어 💥전문가의 인테리어 컨설팅으로 한방에 끝내기 💥","url":"https://youtu.be/KwyhxLNEkQs?si=ec-iT-4Sh0xynMkL"},{"type":"유튜브","category":"음식점","title":"창업자 필수시청!🌟한식 인테리어 3D디자인 실시간 수정 과정 공개 (feat.반셀프인테리어)","url":"https://youtu.be/iRv4j1awXmc?si=RdDrQDQ-Y_xZ7kHb"},{"type":"유튜브","category":"음식점","title":"고객 몰리는 양꼬치 창업 🍖 매출을 부르는 디자인 포인트! ✨","url":"https://youtu.be/ByWgSMTzxY0?si=NPuCSNCKedyhCwtI"},{"type":"유튜브","category":"음식점","title":"레스토랑 인테리어, 사기 피해 없이 30% 절약하며 공사 완성한 비결은?","url":"https://youtu.be/iuE6h6m9UFw?si=2l2IGQ2DoCJMRyGD"},{"type":"유튜브","category":"음식점","title":"상가인테리어디자인 한식창업 프랜차이즈 컨셉, 이렇게만 잡으면 실패 없습니다","url":"https://youtu.be/urcaWfVS47s?si=MAs9nnnhMYhlYb_w"},{"type":"유튜브","category":"음식점","title":"창업비용 5000만원 절약한 더덕 순댓국 창업 비결은? 매출 1위찍는 융건릉 특색을 살린 인테리어 노하우","url":"https://youtu.be/Y8FlR-ZPiNE?si=H6Asmub4e51WDa1P"},{"type":"유튜브","category":"음식점","title":"[직영공사 후기 1화] 금례옥 더덕 순댓국 창업! 융건릉 세계 문화유산지에 맛집이?","url":"https://youtu.be/qra2kPi4yyw?si=ajx9uzX8SvuKvuBt"},{"type":"유튜브","category":"음식점","title":"탕후루 프랜차이즈 창업🍡✨ 소자본으로 인테리어와 브랜딩까지 완성!","url":"https://youtu.be/HOetsV5tMd0?si=JlAC44OwBdAU2Ljz"},{"type":"유튜브","category":"음식점","title":"한식창업비용, 무려⭐️5천만원 절약한⭐️ 대표님의 실제 컨빌이용 후기","url":"https://youtu.be/gHFTvbwOmhw?si=cO-VICS1nWcwrYRQ"},{"type":"유튜브","category":"음식점","title":"반셀프 인테리어로 한식창업 🍚🥢 인테리어 고민해결! 공사 전에 알아야 할 꿀팁!✨","url":"https://youtu.be/QlJPq-xltN4?si=KPg7GhVs9x57Xhex"},{"type":"유튜브","category":"음식점","title":"20대에 사장님이 된 인테리어디자인 대표 급발진한 이유는? 마라탕창업 인테리어하시는 사장님 돈 두번 안쓸 수 있었던 비결! 창업비용 줄이기, 돈 안쓰고 망하는 인테리어 살리기","url":"https://youtu.be/s_MVoXF8jNM?si=hzPIe9B0KPyNJhhn"},{"type":"유튜브","category":"술집·바·펍","title":"SNS 감성 저격! ✨ 골목길 아지트 감성술집 브랜딩비법, 반셀프인테리어로 예산절감!🔥","url":"https://youtu.be/cdid7pHuR2I?si=Q_E2849BYhEgQ70I"},{"type":"유튜브","category":"술집·바·펍","title":"카페같은 감성술집? 🍻 술집창업 인테리어계의 혁신! ☕️🍷 5000만원 공사 3000만원대로 가성비있게 만드는 방법✨ (인테리어꿀팁)","url":"https://youtu.be/7njCkh0AyaU?si=6lGRvZBo905cp5AC"},{"type":"유튜브","category":"뷰티·미용","title":"반셀프로 창업비30% 아낀 뷰티샵 인테리어, 사장님들이 강력 추천하는 방법 💄✨ 💆‍♀️","url":"https://youtu.be/k5Rgay-EvS4?si=8GBWyp-EtVIA9Kew"},{"type":"유튜브","category":"뷰티·미용","title":"창업비용 30% 절약! 뷰티샵 사장님들이 선택한 반셀프 인테리어 비법!","url":"https://youtu.be/UNP_HIS9xbA?si=RDGfPdAv5BpdulrG"},{"type":"유튜브","category":"뷰티·미용","title":"20평대 소자본 뷰티샵 창업, 이 방법으로 실제로 2000만원 절약!✨💅💆‍♀️","url":"https://youtu.be/lJRmtlnsuJI?si=2FkTNA0z4DUOCQOC"},{"type":"유튜브","category":"뷰티·미용","title":"시공사기 없이 반셀프인테리어 성공하고 3000만원 아낀 방법, 뷰티샵과 세신샵이 함께 있다고?!💅🛀 ’국내최초‘ 올인원 세신뷰티샵 창업 성공기🔥","url":"https://youtu.be/nlyj_XG2zII?si=HK_MhRFY91Z-TL래"},{"type":"유튜브","category":"뷰티·미용","title":"800만원으로 뷰티샵 인테리어 해결! 반셀프 인테리어로 창업비 절약하는 법 💆‍♀️💅","url":"https://youtu.be/p-lvSgQak-E?si=MLnak7jHjjmz7IxD"},{"type":"유튜브","category":"운동·스포츠","title":"필라테스인테리어 개인레슨 부터 스트레칭, 요가 잘되는 비결","url":"https://youtu.be/DluqxxiJaH8?si=GeiQdPAiZtzdIqip"},{"type":"유튜브","category":"사무실·오피스","title":"50평대 복층 사무실 인테리어 공개! 직원 만족도 200% 올라간 이유","url":"https://youtu.be/NxTpRJYrwXg?si=x5mNTIHYm9nEax7I"},{"type":"유튜브","category":"사무실·오피스","title":"판교 150평대 사무실 인테리어, 2억 견적을 1억에 했다고 ?? ※실제 찐 후기 ※","url":"https://youtu.be/UX3OS5rCV8I?si=2TUVZ9Ugzs6svqZF"},{"type":"유튜브","category":"사무실·오피스","title":"사무실 풍수지리, 인테리어 배치부터 새해 금전운을 부르는 꿀팁","url":"https://youtu.be/K2J-WTF0VL8?si=UL8_7DlBgrdMgjrl"},{"type":"유튜브","category":"사무실·오피스","title":"잘나가는 회사는 ‘사무실 인테리어’부터 다릅니다. (판교 IT업체들이 선택한 공간 전략과 배치)","url":"https://youtu.be/M0VSe_aDw5Q?si=3KhM5LCxi9270sg5"},{"type":"유튜브","category":"교육공간","title":"연구실 이렇게 꾸민다고? 연세대 인테리어 클래스 실화냐","url":"https://youtu.be/KBscO4ClJDc?si=FnR8uqgrgm4UkbVq"},{"type":"유튜브","category":"교육공간","title":"경남대학교와 함께한 컨빌, 미디어영상학과에 무슨일이?","url":"https://youtu.be/S1yRS_CAsAY?si=Hns5l9QaL2nF8P2p"},{"type":"유튜브","category":"종교시설","title":"목사님이 직접 공사하셨다고요? 반셀프인테리어로 5천만원 절약한 교회 리모델링의 비밀","url":"https://youtu.be/9ITB-_l8ZuQ?si=_WgKpahjRG4t_FOD"},{"type":"유튜브","category":"종교시설","title":"새해 맞이 교회리모델링을 3000만원이나 절약한 광주월성교회의 비법 대공개🔥","url":"https://youtu.be/_kJKeTYkMPg?si=ZzNd7voWVJV9_j93"},{"type":"유튜브","category":"종교시설","title":"이런 교회 봤어? 💒✨ 성도들이 찾아오고 싶게 만든 목사님의 반셀프인테리어 도전기 (인테리어전문가와 싸게하는법) 😎","url":"https://youtu.be/4kjG6AF3EBQ?si=pFFF4LG1QNHH_UPF"},{"type":"유튜브","category":"종교시설","title":"인테리어비용 30% 폭풍 절감!! 교회 리모델링 ‘도면’ 대공개💒 ⚠️이 방법 모르면 손해입니다⚠️","url":"https://youtu.be/Sifv-tmaFMg?si=u1Xc7AM5Ax7umpPQ"},{"type":"유튜브","category":"종교시설","title":"17년 목사님의 결단! 교회도 이제 브랜딩이 필요합니다. (충격적인 비포&에프터 변화)","url":"https://youtu.be/A8-autHvFlc?si=KAmQtKaW_QC4ZC-v"},{"type":"유튜브","category":"주거공간","title":"초보자도 3000만 원에 아파트 리모델링 성공? 정답은 “도면에 있다!” (⭐️x5)","url":"https://youtu.be/IiTPZ-E6zCo?si=8jEOH5QCxQYqFwUC"},{"type":"유튜브","category":"주거공간","title":"아파트리모델링/ 실시간도면 수정해주는 서비스!! / 오로지 컨빌에서만 가능 🔥","url":"https://youtu.be/ICMwqngYvkI?si=v7tQKh-J9YSrcCm1"},{"type":"유튜브","category":"주거공간","title":"폐가같던 한옥이 이렇게 바뀐다고요? (충격 Before & After)","url":"https://youtu.be/3NdL7CO7rVk?si=GDbi1olMBUgrYD95"},{"type":"유튜브","category":"주거공간","title":"아파트 리모델링 시작하셨나요? 당장 멈추세요, '이것' 모르면 돈 버립니다","url":"https://youtu.be/UxgKjgLEfZA?si=6Nf9k57IZU41Sc_8"},{"type":"유튜브","category":"주거공간","title":"반려견과 함께하는 꿈의 집🏡 전원주택 인테리어 완벽 가이드🤍","url":"https://youtu.be/xA_YAq8Uz4c?si=DjQqYbsmv1vzknqO"},{"type":"유튜브","category":"숙박시설","title":"좁은 에어비엔비 숙소도 감성 UP! 크리스마스 인테리어 꿀팁 7가지!","url":"https://youtu.be/zLfXyGzg0IM?si=QDBuifhy_mzQ2MwO"},{"type":"유튜브","category":"무인매장","title":"다 똑같은 무인문구점 말고! 소자본으로 대박난 ‘이 무인문방구’의 정체!","url":"https://youtu.be/0PeuE7DsoEQ?si=YGr6SwQvS7o06iz-"},{"type":"유튜브","category":"무인매장","title":"인테리어만 잘해도 매출이 달라집니다. (무인 카페 실제 사례 공개)","url":"https://youtu.be/uLiRGqBPf94?si=BhJtbP129cYQK3yX"},{"type":"유튜브","category":"무인매장","title":"매출상승 일으키는 반셀프인테리어! 무인문구점 창업 완공 STORY 💖","url":"https://youtu.be/BER2zL7RjzY?si=ap7qhZ1mQjlhfo73"},{"type":"유튜브","category":"상업공간·매장·쇼룸·팝업","title":"프랜차이즈 부스 디자인, 롯데월드 아쿠아리움 젤라또 부스 제작 과정 🐧🍧","url":"https://youtu.be/s-ox1u90MCI?si=dVEZHr_mAYeiIeUD"},{"type":"유튜브","category":"공공·관공서","title":"전통시장 리모델링, 어디부터? 입구·간판부터 하는 이유｜우동종합시장 사례","url":"https://youtu.be/VsIY266eabo?si=REwSq8Y5eNS6hoUS"},{"type":"유튜브","category":"공공·관공서","title":"디자인회사 CEO가 자신의 창원 고향길을 디자인 한 스토리","url":"https://youtu.be/T7tUEAx1xtQ?si=Za-n5JJ7zQQ8ewTC"},{"type":"유튜브","category":"레저·체험공간","title":"실내캠핑 창업 스토리! 2000만원 인테리어 셀프인테리어 창업도전기! 반셀프인테리어 완전가능","url":"https://youtu.be/EJAGs1kicZA?si=ucpF2I49JSA9kmdl"},{"type":"유튜브","category":"레저·체험공간","title":"강아지유치원 인테리어부터 운영까지, 1억3천만원을 6천으로 아낀 대표들의 생생한 조언","url":"https://youtu.be/vnBNC33juKc?si=i8-ovtH54yOJXWKT"},{"type":"유튜브","category":"레저·체험공간","title":"실내캠핑장 창업비 30% 절감! 🏕️ 반셀프 인테리어로 쉽고 빠르게 시작하는 법✨","url":"https://youtu.be/sNYKAzRyZTY?si=xgEyORSldGcqCpUt"},{"type":"유튜브","category":"레저·체험공간","title":"30평대 실내캠핑장 창업, 감성넘치는 인테리어로 차별화 하는 법 공개 !","url":"https://youtu.be/X8YMk8XdV2s?si=iSwrHN03pC-39bgr"},{"type":"유튜브","category":"레저·체험공간","title":"고객들이 사진찍고 알아서 홍보하는 실내캠핑장, 이렇게 디자인했습니다. (35평 사례)","url":"https://youtu.be/Zx-vBwIs8Ec?si=F8EkAyn8QK_nQqqS"},{"type":"유튜브","category":"브랜딩·디자인 서비스","title":"로고제작, 잘 만드는 업체에 맡기면 매출이 달라집니다 | 컨빌 브랜드 로고 사례 1탄","url":"https://youtu.be/CJJabme24gg?si=nMwjia3hvykKht1a"},{"type":"유튜브","category":"브랜딩·디자인 서비스","title":"단순 시공 아닌 ‘설계 + 브랜딩’까지 인테리어 잘하는 곳","url":"https://youtu.be/KhRgZ3OvVzc?si=5xC2X856VBiJzgkz"},{"type":"유튜브","category":"브랜딩·디자인 서비스","title":"사장님, 로고 하나로 매출이 달라집니다 | 컨빌 브랜드 로고 사례 2탄","url":"https://youtu.be/RLqJGiUBU-Q?si=IPnl6_XS0HgdZTmp"},{"type":"유튜브","category":"브랜딩·디자인 서비스","title":"인테리어 홍보가 고민이신가요? 광고비없이 3D도면까지 받는 법","url":"https://youtu.be/jj6CmJITUxg?si=lNadZNKlcsvlHnZT"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"디자인 회사를 넘어, 플랫폼으로｜컨빌이 만드는 인테리어 혁신","url":"https://youtu.be/cdAOIbAQlqs?si=0qykQ-XCt8vCzFrV"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"손님이 떠나는 진짜 이유, 매출 30%는 인테리어에서 갈린다","url":"https://youtu.be/iHsmU_qdfjs?si=AirqWxJTXrXfvkSy"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"실내건축디자인학과, 디자이너 준비하는 친구들! 다 드루와 🌟 현직 디자인회사 대표가 추천하는 인생책 2권 📚✨🤫","url":"https://youtu.be/H-yfkfqOUJ4?si=HZOHSFEvQk8_iE_w"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"인테리어 공사 하기 전, 3D도면부터 확실히 구해야하는 이유 !","url":"https://youtu.be/eat5QlPUp5g?si=N4x7PTmwS6smV46Q"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"✨가성비 좋은 마감재✨추천 !!❤️‍🔥 (인더스트리얼, 자연주의,레트로,복고 인테리어 컨셉별로 총정리)","url":"https://youtu.be/8P20jS3OZco?si=RJj4g7oa8KAnLtYy"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"인테리어 사기에 질린 고객님이 선택한 방법","url":"https://youtu.be/0bIhQj3b-4g?si=dWy61XxJrQrIxhSz"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"2025년 새해 창업 준비, 상가 인테리어 비용 1000만원 이상 줄이는 비결!","url":"https://youtu.be/iKqFHzKaiIQ?si=y2OyoebdS_9sQ47H"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"인테리어 하기 전 꼭 봐야하는 영상! 셀프로도 가능한 시공비 절감 꿀팁!","url":"https://youtu.be/ol8f05gNbMw?si=dKh7sjQs5rMGZxlV"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"초보자를 위한 비용 절감 인테리어 노하우 | 래핑 칸막이, 시트 커팅, 가구 리폼","url":"https://youtu.be/Ezn_ASYUOQ0?si=A29nMSlyjYd6H3Mu"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"9분만에 배우는 인테리어 도면강의 핵심요약! ⭐️리모델링 창업 초보 필수시청⭐️","url":"https://youtu.be/sWBD_HVMECM?si=INAsVEhAKXauy1VQ"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"⚠️모르면 폐업률 2배!⚠️ 상가 인테리어 비용 확 줄이는 비법 ✨","url":"https://youtu.be/uihCvCv8MnU?si=2FPMSHkTKe7bSwF-"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"단돈 5천원! 다이소에서 ‘크리스마스 감성 폭발’ 하는 인테리어 꿀팁 BEST 5 공개 !🎄","url":"https://youtu.be/7xNyFygAFP4?si=W1QsoFQBC1LlHGfv"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"꿈을 현실로! 소비자가 믿고 찾는 인테리어 솔루션, 컨빌디자인 이야기","url":"https://youtu.be/ZC_SwawK6Lc?si=9KTGqvSoPZWK5vyc"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"에어비앤비 아니어도 OK! 누구나 따라할 수 있는 휴양지 인테리어 꿀팁","url":"https://youtu.be/qNzPTgkwUmU?si=_-FX4GShAfpeUhGD"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"‘평당 얼마예요?’ 묻기 전에 반드시 알아야 할 인테리어 설계의 중요성","url":"https://youtu.be/svKC1pbKTnE?si=3M6iIOSaoxGnGBLM"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"소상공인 대출보다 더 좋은 방법, 알고 계셨나요? 1억 지원금으로 창업했습니다 (인테리어+로고까지)","url":"https://youtu.be/Lnncba0ceZI?si=foWmsqwMScr0SPsc"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"잘되는 프랜차이즈 성공전략 , 창업초보자 필수시청!","url":"https://youtu.be/ugY-DrH02Nw?si=DPMv485VR11bWIjV"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"셀프 인테리어 필수! 초보도 쉽게 하는 실측 하는 법 (10분 완벽 정리)","url":"https://youtu.be/Wix7dv8ersY?si=ddha5Yqi-8MUGmDg"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"예산에 맞출까, 디자인에 맞출까 ..? 인테리어 브랜딩 고민 이제 그만!!! 100%가능한 소자본 프랜차이즈 창업 하기","url":"https://youtu.be/8B9P73CU0EU?si=aqwGU4GAqIOIyc7Y"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"프랜차이즈 창업 전 필수! 매출 부스팅 인테리어디자인 아이디어💡","url":"https://youtu.be/jGalYSoj1xM?si=vvGa-ghsAEo6I-oR"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"인테리어공사하기전에 알아야하는 디자인 컨셉정하기(feat.인테리어디자이너)","url":"https://youtu.be/jHfm6OvittA?si=0LRECZvTvHn2LsUV"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"반셀프인테리어 직영공사 하면 안되는 사람 3가지 유형(feat. 그래도 하고싶다면?)","url":"https://youtu.be/E6-dsN3DYMA?si=a8sxRKUDkGmvOnwn"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"대학고민 실내건축디자인과 다 들어와! 한양대 실디출신 ceo가 알려주는 디자인과 Q&A","url":"https://youtu.be/72bX_XpLOUI?si=dCrrsvuPwDnObV_e"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"혼자하기 막막한 반셀프인테리어, 이 영상 하나만 보면 고민 완전종결 ‼️","url":"https://youtu.be/pBU2QyINNjg?si=bd0kJsb-PnQr7Ieu"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"반셀프인테리어로 창업비용 절약하기🔥필수시청🔥하세요!!시공이 가능한 3D도면으로 인테리어 비용30% 절약하기","url":"https://youtu.be/pY4ucERniUQ?si=WNZJndKpCFyMLvLf"},{"type":"유튜브","category":"인테리어 팁·노하우","title":"반셀프인테리어로 비용30%를 아낄 수 있다고?","url":"https://youtu.be/fla9S-Z6nEg?si=DSlHwe9j8jBEfOE-"}];
+
+const CATEGORIES = [
+  "카페·디저트","음식점","술집·바·펍",
+  "뷰티·미용","운동·스포츠","의료시설",
+  "사무실·오피스","교육공간","종교시설",
+  "주거공간","숙박시설",
+  "무인매장","상업공간·매장·쇼룸·팝업","공공·관공서","레저·체험공간",
+  "브랜딩·디자인 서비스","인테리어 팁·노하우"
+];
+
+// 카테고리별 표현 문구
+const CAT_PHRASE = {
+  "카페·디저트": "카페 & 디저트",
+  "음식점": "음식점",
+  "술집·바·펍": "술집 & 바",
+  "뷰티·미용": "뷰티 & 세신샵",
+  "운동·스포츠": "필라테스 & 운동시설",
+  "의료시설": "병원 & 의료시설",
+  "사무실·오피스": "사무실 & 오피스",
+  "교육공간": "학원 & 교육공간",
+  "종교시설": "교회",
+  "주거공간": "주거공간",
+  "숙박시설": "숙박시설",
+  "무인매장": "무인매장",
+  "상업공간·매장·쇼룸·팝업": "상업매장 & 쇼룸",
+  "공공·관공서": "관공서 & 공공시설",
+  "레저·체험공간": "캠핑장 & 체험공간",
+  "브랜딩·디자인 서비스": "브랜딩 & 디자인",
+  "인테리어 팁·노하우": "인테리어",
+  "__all__": "인테리어",
+};
+
+// 카테고리별 기본 템플릿 (사장님 메시지 구조 기반)
+const DEFAULT_TEMPLATES = {};
+const _tplFor = (phrase) =>
+`안녕하세요 고객님 !
+저희는 3D디자인 설계 전문업체 컨빌디자인입니다.
+이전에 진행했던 ${phrase} 인테리어 디자인사례 소개해드립니다 ^^
+✔컨빌 홈페이지 (포트폴리오가 궁금하다면?)
+https://convil.net/
+{{BLOG_LINKS}}
+---
+🎥 생생한 영상으로 만나보세요 !
+{{YOUTUBE_LINKS}}
+---
+✔컨빌 유튜브 (현장출장 사례가 궁금하다면?)
+https://www.youtube.com/@convil.interior/videos
+찬찬히 살펴보시고 
+궁금하신 점은 언제든지 연락 주세요 ^^
+감사합니다.`;
+
+Object.keys(CAT_PHRASE).forEach(k => DEFAULT_TEMPLATES[k] = _tplFor(CAT_PHRASE[k]));
+
+const STORE = {
+  tplKey: (cat) => 'convil_tpl_' + cat,
+  getTpl(cat) {
+    try { return localStorage.getItem(this.tplKey(cat)) || DEFAULT_TEMPLATES[cat] || DEFAULT_TEMPLATES['__all__']; }
+    catch(e){ return DEFAULT_TEMPLATES[cat] || DEFAULT_TEMPLATES['__all__']; }
+  },
+  setTpl(cat, text) { try { localStorage.setItem(this.tplKey(cat), text); } catch(e){} },
+  clearTpl(cat) { try { localStorage.removeItem(this.tplKey(cat)); } catch(e){} },
+  getSaved() { try { return JSON.parse(localStorage.getItem('convil_saved') || '[]'); } catch(e){ return []; } },
+  setSaved(list) { try { localStorage.setItem('convil_saved', JSON.stringify(list)); } catch(e){} },
+};
+
+const state = {
+  search: '',
+  type: 'all',
+  cat: '__all__',
+  selected: new Set(),
+  modalIdx: null,
+};
+
+// ====== Init UI ======
+function buildChips() {
+  const counts = {};
+  DATA.forEach(d => counts[d.category] = (counts[d.category] || 0) + 1);
+  const chips = document.getElementById('catChips');
+  let html = `<button class="cat-chip on" data-cat="__all__">전체 <span class="count">${DATA.length}</span></button>`;
+  CATEGORIES.forEach(c => {
+    if (counts[c]) html += `<button class="cat-chip" data-cat="${c}">${c} <span class="count">${counts[c]}</span></button>`;
+  });
+  chips.innerHTML = html;
+  chips.querySelectorAll('.cat-chip').forEach(b => b.onclick = () => {
+    state.cat = b.dataset.cat;
+    chips.querySelectorAll('.cat-chip').forEach(x => x.classList.toggle('on', x === b));
+    const label = state.cat === '__all__' ? '전체' : state.cat;
+    document.getElementById('catMeta').textContent = label;
+    document.getElementById('msgCatLabel').textContent = label;
+    document.getElementById('msgCatBadge').textContent = label;
+    loadTemplateIntoEditor();
+    render();
+  });
+}
+
+document.querySelectorAll('#typeToggle button').forEach(b => {
+  b.onclick = () => {
+    state.type = b.dataset.type;
+    document.querySelectorAll('#typeToggle button').forEach(x => x.classList.toggle('on', x === b));
+    render();
+  };
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  state.search = e.target.value.trim().toLowerCase();
+  render();
+});
+
+function toggleLib() {
+  const t = document.getElementById('libToggle');
+  t.classList.toggle('open');
+  if (t.classList.contains('open')) {
+    document.getElementById('libMeta').textContent = `${getFiltered().length}건 표시 중`;
+  } else {
+    document.getElementById('libMeta').textContent = `${DATA.length}건 · 클릭하여 펼치기`;
+  }
+}
+
+function toggleSaved() {
+  document.getElementById('savedToggle').classList.toggle('open');
+}
+
+function getFiltered() {
+  return DATA.filter(d => {
+    if (state.type !== 'all' && d.type !== state.type) return false;
+    if (state.cat !== '__all__' && d.category !== state.cat) return false;
+    if (state.search && !d.title.toLowerCase().includes(state.search) && !d.category.toLowerCase().includes(state.search)) return false;
+    return true;
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function highlight(text, q) {
+  if (!q) return escapeHtml(text);
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx === -1) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + '<mark style="background:var(--accent-soft);color:var(--accent-deep);padding:0 2px;border-radius:2px">' + escapeHtml(text.slice(idx, idx+q.length)) + '</mark>' + escapeHtml(text.slice(idx+q.length));
+}
+
+function render() {
+  const filtered = getFiltered();
+  const list = document.getElementById('list');
+
+  if (document.getElementById('libToggle').classList.contains('open')) {
+    document.getElementById('libMeta').textContent = `${filtered.length}건 표시 중`;
+  } else {
+    document.getElementById('libMeta').textContent = `${DATA.length}건 · 클릭하여 펼치기`;
+  }
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty">조건에 맞는 컨텐츠가 없습니다.<br>다른 키워드나 필터를 시도해보세요.</div>';
+    updateSelectAllBtn();
+    return;
+  }
+
+  let html = '';
+  filtered.forEach(d => {
+    const realIdx = DATA.indexOf(d);
+    const sel = state.selected.has(realIdx);
+    const tagCls = d.type === '블로그' ? 'blog' : 'yt';
+    html += `<div class="item ${sel?'selected':''}" data-idx="${realIdx}">
+      <div class="item-check"></div>
+      <div class="item-body">
+        <div class="item-meta">
+          <span class="tag ${tagCls}">${d.type}</span>
+          <span class="cat-label">${escapeHtml(d.category)}</span>
+        </div>
+        <div class="item-title">${highlight(d.title, state.search)}</div>
+        <div class="item-link">${escapeHtml(d.url)}</div>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+
+  list.querySelectorAll('.item').forEach(el => {
+    el.onclick = () => {
+      const i = parseInt(el.dataset.idx);
+      if (state.selected.has(i)) state.selected.delete(i);
+      else state.selected.add(i);
+      el.classList.toggle('selected');
+      renderSelected();
+      updateSelectAllBtn();
+    };
+  });
+
+  updateSelectAllBtn();
+}
+
+function updateSelectAllBtn() {
+  const btn = document.getElementById('selectAllBtn');
+  const filtered = getFiltered();
+  if (!filtered.length) { btn.textContent = '현재 보이는 항목 전체 선택'; btn.classList.remove('active'); return; }
+  const allSelected = filtered.every(d => state.selected.has(DATA.indexOf(d)));
+  if (allSelected) {
+    btn.textContent = `보이는 ${filtered.length}건 전체 해제`;
+    btn.classList.add('active');
+  } else {
+    btn.textContent = `보이는 ${filtered.length}건 전체 선택`;
+    btn.classList.remove('active');
+  }
+}
+
+function selectAllVisible() {
+  const filtered = getFiltered();
+  if (!filtered.length) return;
+  const allSelected = filtered.every(d => state.selected.has(DATA.indexOf(d)));
+  if (allSelected) filtered.forEach(d => state.selected.delete(DATA.indexOf(d)));
+  else filtered.forEach(d => state.selected.add(DATA.indexOf(d)));
+  render();
+  renderSelected();
+}
+
+function renderSelected() {
+  const sl = document.getElementById('selList');
+  const cnt = state.selected.size;
+  const blogCnt = Array.from(state.selected).filter(i => DATA[i].type === '블로그').length;
+  const ytCnt = cnt - blogCnt;
+  document.getElementById('selCount').textContent = cnt;
+  document.getElementById('selBreakdown').textContent = cnt ? `(블로그 ${blogCnt} · 유튜브 ${ytCnt})` : '';
+  document.getElementById('blogCountInline').textContent = blogCnt;
+  document.getElementById('ytCountInline').textContent = ytCnt;
+
+  if (!cnt) {
+    sl.innerHTML = '<div class="sel-empty">위에서 컨텐츠 라이브러리를 펼쳐 항목을 선택하세요</div>';
+    refreshMessagePreview();
+    return;
+  }
+  let html = '';
+  Array.from(state.selected).forEach(i => {
+    const d = DATA[i];
+    html += `<div class="sel-item">
+      <div class="sel-item-text"><strong>[${d.type}]</strong> ${escapeHtml(d.title)}</div>
+      <button class="sel-remove" onclick="removeSelected(${i})" title="제거">×</button>
+    </div>`;
+  });
+  sl.innerHTML = html;
+
+  refreshMessagePreview();
+}
+
+function removeSelected(i) {
+  state.selected.delete(i);
+  document.querySelector(`.item[data-idx="${i}"]`)?.classList.remove('selected');
+  renderSelected();
+  updateSelectAllBtn();
+}
+
+function clearAll() {
+  state.selected.clear();
+  document.querySelectorAll('.item.selected').forEach(el => el.classList.remove('selected'));
+  renderSelected();
+  updateSelectAllBtn();
+}
+
+// ====== Message generation ======
+function fmtItem(d) { return `▶ ${d.title}\n${d.url}`; }
+
+function buildBlogLinks() {
+  const items = Array.from(state.selected).map(i => DATA[i]).filter(d => d.type === '블로그');
+  return items.length ? items.map(fmtItem).join('\n') : '';
+}
+function buildYoutubeLinks() {
+  const items = Array.from(state.selected).map(i => DATA[i]).filter(d => d.type === '유튜브');
+  return items.length ? items.map(fmtItem).join('\n') : '';
+}
+function buildAllLinks() {
+  const items = Array.from(state.selected).map(i => DATA[i]);
+  return items.length ? items.map(fmtItem).join('\n') : '';
+}
+
+function substituteTemplate(tpl) {
+  const blog = buildBlogLinks();
+  const yt = buildYoutubeLinks();
+  const all = buildAllLinks();
+  return tpl
+    .replace(/\{\{BLOG_LINKS\}\}/g, blog || '{{BLOG_LINKS}}')
+    .replace(/\{\{YOUTUBE_LINKS\}\}/g, yt || '{{YOUTUBE_LINKS}}')
+    .replace(/\{\{LINKS\}\}/g, all || '{{LINKS}}');
+}
+
+let _userEdited = false;
+const msgArea = document.getElementById('msgArea');
+msgArea.addEventListener('input', () => { _userEdited = true; });
+
+function loadTemplateIntoEditor() {
+  // Always reload on category change
+  const tpl = STORE.getTpl(state.cat);
+  msgArea.value = substituteTemplate(tpl);
+  _userEdited = false;
+}
+
+function refreshMessagePreview() {
+  // Selection changed
+  if (_userEdited) {
+    // User has edited. Only fill remaining {{...}} placeholders in their text.
+    msgArea.value = substituteTemplate(msgArea.value);
+  } else {
+    // Clean state. Regenerate from template.
+    const tpl = STORE.getTpl(state.cat);
+    msgArea.value = substituteTemplate(tpl);
+  }
+}
+
+function saveTemplate() {
+  const text = msgArea.value;
+  if (!text.trim()) { showToast('비어있는 템플릿은 저장할 수 없습니다'); return; }
+  STORE.setTpl(state.cat, text);
+  const catName = state.cat === '__all__' ? '전체' : state.cat;
+  showToast(`'${catName}' 템플릿이 저장되었습니다`);
+  _userEdited = false;
+}
+
+function resetTemplate() {
+  if (!confirm('이 카테고리의 템플릿을 기본값으로 되돌릴까요?\n저장된 사용자 템플릿은 삭제됩니다.')) return;
+  STORE.clearTpl(state.cat);
+  loadTemplateIntoEditor();
+  showToast('기본 템플릿으로 되돌렸습니다');
+}
+
+async function copyMessage() {
+  const txt = msgArea.value;
+  if (!txt.trim()) { showToast('복사할 메시지가 없습니다'); return; }
+  await copyText(txt);
+  showToast('메시지가 클립보드에 복사되었습니다');
+}
+
+async function copyText(txt) {
+  try { await navigator.clipboard.writeText(txt); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+}
+
+// ====== Saved messages ======
+function saveMessage() {
+  const text = msgArea.value.trim();
+  if (!text) { showToast('저장할 메시지가 없습니다'); return; }
+  const items = Array.from(state.selected).map(i => ({
+    type: DATA[i].type, title: DATA[i].title, url: DATA[i].url, category: DATA[i].category
+  }));
+  const list = STORE.getSaved();
+  list.unshift({
+    id: Date.now(),
+    timestamp: new Date().toISOString(),
+    category: state.cat === '__all__' ? '전체' : state.cat,
+    items: items,
+    message: text,
+  });
+  STORE.setSaved(list);
+  renderSaved();
+  showToast('보관함에 저장되었습니다');
+  if (!document.getElementById('savedToggle').classList.contains('open')) {
+    document.getElementById('savedToggle').classList.add('open');
+  }
+}
+
+function fmtDate(iso) {
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function renderSaved() {
+  const list = STORE.getSaved();
+  document.getElementById('savedCount').textContent = list.length;
+  const info = document.getElementById('savedInfo');
+  info.textContent = list.length ? `총 ${list.length}건 보관됨` : '아직 저장된 메시지가 없습니다';
+
+  const sl = document.getElementById('savedList');
+  if (!list.length) {
+    sl.innerHTML = '<div class="saved-empty">메시지를 만든 뒤 "보관함에 저장"을 누르면 여기에 모입니다.</div>';
+    return;
+  }
+  let html = '';
+  list.forEach((r, idx) => {
+    const preview = r.message.replace(/\n/g,' ').slice(0,80);
+    html += `<div class="saved-row">
+      <div class="saved-info">
+        <div class="saved-meta">
+          <span class="saved-cat">${escapeHtml(r.category)}</span>
+          <span>${fmtDate(r.timestamp)}</span>
+          <span>· 컨텐츠 ${r.items.length}건</span>
+        </div>
+        <div class="saved-preview">${escapeHtml(preview)}${r.message.length>80?'…':''}</div>
+      </div>
+      <div class="saved-actions">
+        <button class="saved-btn" onclick="openDetail(${idx})">보기</button>
+        <button class="saved-btn" onclick="copySaved(${idx})">복사</button>
+        <button class="saved-btn danger" onclick="deleteSaved(${idx})">삭제</button>
+      </div>
+    </div>`;
+  });
+  sl.innerHTML = html;
+}
+
+function openDetail(idx) {
+  const r = STORE.getSaved()[idx];
+  if (!r) return;
+  state.modalIdx = idx;
+  document.getElementById('detailMeta').innerHTML =
+    `<strong>${escapeHtml(r.category)}</strong> · ${fmtDate(r.timestamp)} · 컨텐츠 ${r.items.length}건`;
+  document.getElementById('detailText').textContent = r.message;
+  document.getElementById('modalBg').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e && e.target.id !== 'modalBg' && e.type === 'click') return;
+  document.getElementById('modalBg').classList.remove('show');
+  state.modalIdx = null;
+}
+
+async function copyDetail() {
+  if (state.modalIdx === null) return;
+  const r = STORE.getSaved()[state.modalIdx];
+  await copyText(r.message);
+  showToast('복사되었습니다');
+}
+
+async function copySaved(idx) {
+  const r = STORE.getSaved()[idx];
+  if (!r) return;
+  await copyText(r.message);
+  showToast('복사되었습니다');
+}
+
+function deleteSaved(idx) {
+  if (!confirm('이 메시지를 삭제할까요?')) return;
+  const list = STORE.getSaved();
+  list.splice(idx, 1);
+  STORE.setSaved(list);
+  renderSaved();
+  showToast('삭제되었습니다');
+}
+
+function clearAllSaved() {
+  const list = STORE.getSaved();
+  if (!list.length) { showToast('보관된 메시지가 없습니다'); return; }
+  if (!confirm(`보관된 ${list.length}건의 메시지를 모두 삭제할까요?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  STORE.setSaved([]);
+  renderSaved();
+  showToast('모두 삭제되었습니다');
+}
+
+function downloadAll() {
+  const list = STORE.getSaved();
+  if (!list.length) { showToast('다운로드할 메시지가 없습니다'); return; }
+  let text = `컨빌 컨텐츠 응대 메시지 보관함\n생성일: ${fmtDate(new Date().toISOString())}\n총 ${list.length}건\n\n${'='.repeat(60)}\n\n`;
+  list.forEach((r, i) => {
+    text += `[${i+1}] ${r.category} · ${fmtDate(r.timestamp)}\n`;
+    text += `컨텐츠 ${r.items.length}건:\n`;
+    r.items.forEach(it => {
+      text += `  - [${it.type}] ${it.title}\n    ${it.url}\n`;
+    });
+    text += `\n--- 메시지 ---\n${r.message}\n\n${'='.repeat(60)}\n\n`;
+  });
+  download(`컨빌_저장메시지_${new Date().toISOString().slice(0,10)}.txt`, text, 'text/plain;charset=utf-8');
+  showToast('다운로드를 시작합니다');
+}
+
+function exportJSON() {
+  const data = {
+    exported_at: new Date().toISOString(),
+    saved_messages: STORE.getSaved(),
+    templates: {},
+  };
+  Object.keys(CAT_PHRASE).forEach(c => {
+    const t = localStorage.getItem(STORE.tplKey(c));
+    if (t) data.templates[c] = t;
+  });
+  download(`컨빌_백업_${new Date().toISOString().slice(0,10)}.json`,
+    JSON.stringify(data, null, 2), 'application/json');
+  showToast('백업 파일을 다운로드합니다');
+}
+
+function download(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ====== Init ======
+buildChips();
+render();
+renderSelected();
+loadTemplateIntoEditor();
+renderSaved();
+document.getElementById('totalCount').textContent = DATA.length;
+</script>
+
+</body>
+</html>
