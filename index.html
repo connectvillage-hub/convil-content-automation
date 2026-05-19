@@ -328,11 +328,11 @@ button{cursor:pointer;border:none;background:none}
 .step-nav button{padding:11px 16px;min-height:44px;font-size:13.5px}
 .step-nav-next{font-weight:700}
 
-.quick-pick-saved{margin-bottom:14px;padding:12px 14px;background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--r-lg)}
+.quick-pick-saved{margin-bottom:14px;padding:12px 14px;background:#FFF6E0;border:1px solid #FFE3A8;border-radius:var(--r-lg)}
 .quick-pick-head{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
-.quick-pick-title{font-size:13px;font-weight:700;color:var(--primary-700)}
+.quick-pick-title{font-size:13px;font-weight:700;color:#8B5A00}
 .quick-pick-sub{font-size:11.5px;color:var(--ink-muted)}
-.quick-pick-select{width:100%;padding:10px 12px;border:1px solid var(--primary-200);border-radius:var(--r);background:#fff;font-size:13.5px;font-family:inherit;color:var(--ink);cursor:pointer;font-weight:500}
+.quick-pick-select{width:100%;padding:10px 12px;border:1px solid #FFD480;border-radius:var(--r);background:#fff;font-size:13.5px;font-family:inherit;color:var(--ink);cursor:pointer;font-weight:500}
 .quick-pick-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(51,102,255,.12)}
 
 @media (max-width:768px){
@@ -551,7 +551,7 @@ button{cursor:pointer;border:none;background:none}
   <section class="section" data-step="1">
     <div class="quick-pick-saved" id="quickPickSaved">
       <div class="quick-pick-head">
-        <span class="quick-pick-title">📌 자주 쓰는 메시지 / 보관함</span>
+        <span class="quick-pick-title">🗃️ 자주 쓰는 메시지 / 보관함</span>
         <span class="quick-pick-sub" id="quickPickSub">저장한 메시지를 바로 03번에 불러올 수 있어요</span>
       </div>
       <select class="quick-pick-select" id="quickPickSelect" onchange="quickPickLoad(this.value); this.value=''">
@@ -570,7 +570,7 @@ button{cursor:pointer;border:none;background:none}
     <div class="quick-links" id="quickLinks">
       <div class="quick-links-head">
         <div class="quick-links-head-left">
-          <span class="quick-links-title">📌 자주 쓰는 링크</span>
+          <span class="quick-links-title">📌 자주 쓰는 블로그 링크</span>
           <span class="quick-links-sub" id="quickLinksSub">자주 쓰는 단일 링크를 한 번에 복사</span>
         </div>
         <button class="btn-secondary" onclick="openQuickAddModal()">+ 추가</button>
