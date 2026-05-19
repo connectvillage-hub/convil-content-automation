@@ -151,6 +151,9 @@ button{cursor:pointer;border:none;background:none}
 .cat-label{font-size:11px;color:var(--ink-muted);font-weight:500}
 .item-title{font-size:13.5px;color:var(--ink);line-height:1.5;font-weight:500;word-break:keep-all}
 .item-link{font-size:11px;color:var(--ink-muted);margin-top:3px;font-family:ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.item-open{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:var(--r-sm);color:var(--ink-muted);background:transparent;text-decoration:none;transition:all .12s;margin-top:2px}
+.item-open:hover{background:var(--primary-50);color:var(--accent);transform:translateY(-1px)}
+.item-open:active{transform:translateY(0)}
 
 .empty{padding:50px 24px;text-align:center;color:var(--ink-muted);font-size:13px}
 
@@ -171,6 +174,27 @@ button{cursor:pointer;border:none;background:none}
 .sel-remove:hover{background:var(--tag-yt-bg);color:var(--tag-yt)}
 
 .quick-links{margin-top:14px;background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--r-lg);padding:14px 18px}
+
+/* 자주 쓰는 메시지 (섹션 03 내부) */
+.quick-msg-panel{margin:0 18px 14px;padding:14px 16px;background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--r-lg)}
+.quick-msg-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.quick-msg-head-left{display:flex;flex-direction:column;gap:2px}
+.quick-msg-title{font-size:13px;color:var(--primary-700);font-weight:700}
+.quick-msg-sub{font-size:11.5px;color:var(--ink-muted);font-weight:400}
+.quick-msg-body{display:flex;flex-direction:column;gap:8px}
+.quick-msg-empty{font-size:12.5px;color:var(--ink-muted);text-align:center;padding:18px 12px;border:1px dashed var(--primary-200);border-radius:var(--r-md);background:#fff}
+.quick-msg-item{display:flex;align-items:flex-start;gap:10px;padding:11px 13px;background:#fff;border:1px solid var(--line-soft);border-radius:var(--r-md);text-align:left;transition:all .15s}
+.quick-msg-item:hover{border-color:var(--accent);box-shadow:0 2px 6px rgba(51,102,255,.08)}
+.quick-msg-main{flex:1;min-width:0;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.quick-msg-name{font-size:13px;font-weight:600;color:var(--ink);line-height:1.4}
+.quick-msg-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-muted)}
+.quick-msg-cat-badge{padding:2px 7px;background:var(--primary-100);color:var(--primary-700);border-radius:var(--r-xs);font-weight:600}
+.quick-msg-preview{font-size:11.5px;color:var(--ink-muted);line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;text-overflow:ellipsis;word-break:keep-all}
+.quick-msg-actions{flex-shrink:0;display:flex;gap:4px}
+.quick-msg-actions button{width:30px;height:30px;border-radius:var(--r-sm);background:transparent;color:var(--ink-muted);font-size:13px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;justify-content:center}
+.quick-msg-actions button:hover{background:var(--primary-100);color:var(--primary-700)}
+.quick-msg-actions .qm-delete:hover{background:var(--error-bg);color:var(--error)}
+.quick-msg-item.copied{border-color:var(--success);background:var(--success-bg)}
 .quick-links-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
 .quick-links-head-left{display:flex;flex-direction:column;gap:2px}
 .quick-links-title{font-size:13px;color:var(--ink-soft);font-weight:700}
@@ -261,6 +285,7 @@ button{cursor:pointer;border:none;background:none}
 .saved-row:last-child{border-bottom:none}
 .saved-row:hover{background:var(--bg-soft)}
 .saved-info{flex:1;min-width:0}
+.saved-title{font-size:14px;color:var(--ink);font-weight:700;line-height:1.4;margin-bottom:4px;word-break:keep-all}
 .saved-meta{font-size:11.5px;color:var(--ink-muted);margin-bottom:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .saved-cat{padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent-deep);font-weight:700;font-size:10.5px;letter-spacing:.03em}
 .saved-preview{font-size:13px;color:var(--ink);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -287,8 +312,48 @@ button{cursor:pointer;border:none;background:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ============ Mobile / Tablet ============ */
+/* ===== Step Indicator + Quick Pick (data-step 시스템) ===== */
+.step-indicator{display:none;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-card);border:1px solid var(--line-soft);border-radius:var(--r-xl);margin-bottom:14px;justify-content:center}
+.step-dot{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:transparent;color:var(--ink-muted);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.step-dot:hover{color:var(--ink-soft)}
+.step-dot.on{background:var(--accent);color:#fff;box-shadow:0 2px 6px rgba(51,102,255,.2)}
+.step-dot.done{color:var(--primary-700);background:var(--primary-50)}
+.step-dot-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.25);font-weight:800;font-size:12px}
+.step-dot:not(.on) .step-dot-num{background:var(--neutral-100);color:var(--ink-soft)}
+.step-dot.done .step-dot-num{background:var(--primary-100);color:var(--primary-700)}
+.step-line{flex:1;height:2px;background:var(--line-soft);max-width:32px}
+.step-line.done{background:var(--primary-200)}
+
+.step-nav{display:none;margin-top:20px;padding-top:18px;border-top:1px solid var(--line-soft);justify-content:space-between;gap:8px;align-items:center}
+.step-nav button{padding:11px 16px;min-height:44px;font-size:13.5px}
+.step-nav-next{font-weight:700}
+
+.quick-pick-saved{margin-bottom:14px;padding:12px 14px;background:var(--primary-50);border:1px solid var(--primary-100);border-radius:var(--r-lg)}
+.quick-pick-head{display:flex;flex-direction:column;gap:2px;margin-bottom:8px}
+.quick-pick-title{font-size:13px;font-weight:700;color:var(--primary-700)}
+.quick-pick-sub{font-size:11.5px;color:var(--ink-muted)}
+.quick-pick-select{width:100%;padding:10px 12px;border:1px solid var(--primary-200);border-radius:var(--r);background:#fff;font-size:13.5px;font-family:inherit;color:var(--ink);cursor:pointer;font-weight:500}
+.quick-pick-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(51,102,255,.12)}
+
 @media (max-width:768px){
   .page{padding:18px 14px 40px}
+
+  /* ===== Mobile Step Wizard ===== */
+  .step-indicator{display:flex;position:sticky;top:0;z-index:50;margin-bottom:16px;box-shadow:0 4px 12px rgba(31,36,41,.04)}
+  .step-dot{padding:5px 8px;font-size:11.5px;gap:5px;flex-shrink:0}
+  .step-dot-label{display:inline}
+  .step-line{max-width:18px;flex:0 1 18px}
+  .step-nav{display:flex}
+  /* 현재 step만 보이게 */
+  body[data-mobile-step="1"] .section[data-step="2"],
+  body[data-mobile-step="1"] .section[data-step="3"],
+  body[data-mobile-step="1"] .section[data-step="archive"],
+  body[data-mobile-step="2"] .section[data-step="1"],
+  body[data-mobile-step="2"] .section[data-step="3"],
+  body[data-mobile-step="2"] .section[data-step="archive"],
+  body[data-mobile-step="3"] .section[data-step="1"],
+  body[data-mobile-step="3"] .section[data-step="2"],
+  body[data-mobile-step="3"] .section[data-step="archive"]{display:none}
 
   /* Header */
   .header{flex-direction:column;align-items:stretch;gap:8px;margin-bottom:20px;padding-bottom:14px;position:relative}
@@ -336,6 +401,7 @@ button{cursor:pointer;border:none;background:none}
   .item-check{width:20px;height:20px}
   .item-title{font-size:13.5px;line-height:1.45}
   .item-link{font-size:10.5px;display:none}  /* URL은 모바일에서 너무 길어서 숨김 */
+  .item-open{width:36px;height:36px}
 
   /* Selected preview */
   .sel-preview{padding:12px 14px}
@@ -474,7 +540,24 @@ button{cursor:pointer;border:none;background:none}
     </div>
   </header>
 
-  <section class="section">
+  <nav class="step-indicator" id="stepIndicator" aria-label="진행 단계">
+    <button type="button" class="step-dot on" data-step="1" onclick="setMobileStep(1)"><span class="step-dot-num">1</span><span class="step-dot-label">카테고리</span></button>
+    <span class="step-line"></span>
+    <button type="button" class="step-dot" data-step="2" onclick="setMobileStep(2)"><span class="step-dot-num">2</span><span class="step-dot-label">컨텐츠</span></button>
+    <span class="step-line"></span>
+    <button type="button" class="step-dot" data-step="3" onclick="setMobileStep(3)"><span class="step-dot-num">3</span><span class="step-dot-label">메시지</span></button>
+  </nav>
+
+  <section class="section" data-step="1">
+    <div class="quick-pick-saved" id="quickPickSaved">
+      <div class="quick-pick-head">
+        <span class="quick-pick-title">📌 자주 쓰는 메시지 / 보관함</span>
+        <span class="quick-pick-sub" id="quickPickSub">저장한 메시지를 바로 03번에 불러올 수 있어요</span>
+      </div>
+      <select class="quick-pick-select" id="quickPickSelect" onchange="quickPickLoad(this.value); this.value=''">
+        <option value="">메시지 선택해서 불러오기...</option>
+      </select>
+    </div>
     <div class="section-title">
       <span class="section-num">01</span>
       <span class="section-name">카테고리 선택</span>
@@ -483,9 +566,25 @@ button{cursor:pointer;border:none;background:none}
     <div class="cat-panel">
       <div class="cat-chips" id="catChips"></div>
     </div>
+
+    <div class="quick-links" id="quickLinks">
+      <div class="quick-links-head">
+        <div class="quick-links-head-left">
+          <span class="quick-links-title">📌 자주 쓰는 링크</span>
+          <span class="quick-links-sub" id="quickLinksSub">자주 쓰는 단일 링크를 한 번에 복사</span>
+        </div>
+        <button class="btn-secondary" onclick="openQuickAddModal()">+ 추가</button>
+      </div>
+      <div class="quick-links-body" id="quickLinksBody"></div>
+    </div>
+
+    <div class="step-nav">
+      <span></span>
+      <button class="btn-primary step-nav-next" onclick="setMobileStep(2)">다음 → 컨텐츠 선택</button>
+    </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-step="2">
     <div class="section-title">
       <span class="section-num">02</span>
       <span class="section-name">컨텐츠 선택</span>
@@ -524,20 +623,13 @@ button{cursor:pointer;border:none;background:none}
         <div class="sel-empty">위에서 컨텐츠 라이브러리를 펼쳐 항목을 선택하세요</div>
       </div>
     </div>
-
-    <div class="quick-links" id="quickLinks">
-      <div class="quick-links-head">
-        <div class="quick-links-head-left">
-          <span class="quick-links-title">📌 자주 쓰는 링크</span>
-          <span class="quick-links-sub" id="quickLinksSub">자주 쓰는 단일 링크를 한 번에 복사</span>
-        </div>
-        <button class="btn-secondary" onclick="openQuickAddModal()">+ 추가</button>
-      </div>
-      <div class="quick-links-body" id="quickLinksBody"></div>
+    <div class="step-nav">
+      <button class="btn-ghost step-nav-prev" onclick="setMobileStep(1)">← 카테고리</button>
+      <button class="btn-primary step-nav-next" onclick="setMobileStep(3)">다음 → 메시지</button>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-step="3">
     <div class="section-title">
       <span class="section-num">03</span>
       <span class="section-name">메시지</span>
@@ -548,10 +640,6 @@ button{cursor:pointer;border:none;background:none}
         <div class="msg-head-title">
           <strong id="msgCatBadge">전체</strong> 카테고리 템플릿
           <span class="tpl-mode-meta" id="tplModeMeta"></span>
-        </div>
-        <div class="msg-help">
-          <code>{{BLOG_LINKS}}</code> / <code>{{YOUTUBE_LINKS}}</code> = 선택한 링크 ·
-          <code>{{TITLE}}</code> / <code>{{URL}}</code> = 단일 모드용
         </div>
       </div>
       <div class="tpl-mode-row">
@@ -565,14 +653,28 @@ button{cursor:pointer;border:none;background:none}
       <textarea class="msg-textarea" id="msgArea" placeholder="이 카테고리의 메시지 템플릿이 여기에 로드됩니다."></textarea>
       <div class="msg-actions">
         <button class="btn-primary" onclick="copyMessage()">📋 메시지 복사</button>
+        <button class="btn-ghost" onclick="saveCurrentAsQuickMsg()">📌 자주 쓰는 메시지로 저장</button>
         <button class="btn-ghost" onclick="saveMessage()">💾 보관함에 저장</button>
-        <button class="btn-ghost" onclick="saveTemplate()">📌 이 내용을 템플릿으로 저장</button>
         <button class="btn-ghost" onclick="resetTemplate()" style="margin-left:auto;color:var(--ink-muted)">↺ 기본값으로</button>
       </div>
+
+      <div class="quick-msg-panel">
+        <div class="quick-msg-head">
+          <div class="quick-msg-head-left">
+            <span class="quick-msg-title">📌 자주 쓰는 메시지</span>
+            <span class="quick-msg-sub" id="quickMsgSub">완성한 메시지를 저장해두고 클릭 한 번으로 복사·불러오기</span>
+          </div>
+        </div>
+        <div class="quick-msg-body" id="quickMsgBody"></div>
+      </div>
+    </div>
+    <div class="step-nav">
+      <button class="btn-ghost step-nav-prev" onclick="setMobileStep(2)">← 컨텐츠 선택</button>
+      <span></span>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-step="archive">
     <div class="section-title">
       <span class="section-num">04</span>
       <span class="section-name">저장된 메시지</span>
@@ -590,6 +692,10 @@ button{cursor:pointer;border:none;background:none}
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button class="btn-secondary" onclick="downloadAll()">📥 전체 다운로드 (.txt)</button>
             <button class="btn-secondary" onclick="exportJSON()">⤓ JSON 백업</button>
+            <label class="btn-secondary" style="cursor:pointer;margin:0;display:inline-flex;align-items:center;gap:4px">
+              ⤒ JSON 복원
+              <input type="file" id="jsonImportInput" accept=".json,application/json" style="display:none">
+            </label>
             <button class="btn-secondary" onclick="clearAllSaved()" style="color:var(--tag-yt)">🗑 전체 삭제</button>
           </div>
         </div>
@@ -744,15 +850,24 @@ const _tplMultiFor = (phrase) =>
 `안녕하세요 고객님 !
 저희는 3D디자인 설계 전문업체 컨빌디자인입니다.
 이전에 진행했던 ${phrase} 인테리어 디자인사례 소개해드립니다 ^^
+
+{{?BLOG}}{{BLOG_LINKS}}
+
+---
+
+{{/BLOG}}{{?YOUTUBE}}🎥 생생한 영상으로 만나보세요 !
+{{YOUTUBE_LINKS}}
+
+---
+
+{{/YOUTUBE}}
+
 ✔컨빌 홈페이지 (포트폴리오가 궁금하다면?)
 https://convil.net/
-{{BLOG_LINKS}}
----
-🎥 생생한 영상으로 만나보세요 !
-{{YOUTUBE_LINKS}}
----
+
 ✔컨빌 유튜브 (현장출장 사례가 궁금하다면?)
 https://www.youtube.com/@convil.interior/videos
+
 찬찬히 살펴보시고
 궁금하신 점은 언제든지 연락 주세요 ^^
 감사합니다.`;
@@ -766,6 +881,7 @@ const _tplSingleFor = (phrase) =>
 
 ✔컨빌 홈페이지 (포트폴리오가 궁금하다면?)
 https://convil.net/
+
 ✔컨빌 유튜브 (현장출장 사례가 궁금하다면?)
 https://www.youtube.com/@convil.interior/videos
 
@@ -798,12 +914,44 @@ const STORE = {
 const state = {
   search: '',
   type: 'all',
-  cat: '__all__',
+  cat: '__all__',               // 단일 선택 호환용 (selectedCats 기준으로 자동 동기화: 0/2+ → __all__, 1 → 그 카테고리)
+  selectedCats: new Set(),      // 다중 선택 카테고리 — 비어있으면 '전체'
   selected: new Set(),
   modalIdx: null,
   tplMode: 'auto',          // 'auto' | 'single' | 'multi'
   lastEffectiveMode: null,
 };
+function syncCatStateFromSelection(){
+  if (state.selectedCats.size === 1) state.cat = Array.from(state.selectedCats)[0];
+  else state.cat = '__all__';
+}
+function getSelectedCatLabel(){
+  const arr = Array.from(state.selectedCats);
+  if (arr.length === 0) return '전체';
+  if (arr.length === 1) return arr[0];
+  return `${arr[0]} 외 ${arr.length - 1}개`;
+}
+function refreshCatChipsUI(){
+  document.querySelectorAll('#catChips .cat-chip').forEach(x => {
+    const c = x.dataset.cat;
+    if (c === '__all__') x.classList.toggle('on', state.selectedCats.size === 0);
+    else x.classList.toggle('on', state.selectedCats.has(c));
+  });
+  const label = getSelectedCatLabel();
+  const setText = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  setText('catMeta', label);
+  setText('msgCatLabel', label);
+  setText('msgCatBadge', label);
+}
+// 외부에서 카테고리를 명시적으로 set (quick-pick, 자주쓰는 메시지 불러오기 등)
+function selectCategoriesExclusive(...cats){
+  state.selectedCats.clear();
+  cats.forEach(c => { if (c && c !== '__all__' && c !== '전체' && CATEGORIES.includes(c)) state.selectedCats.add(c); });
+  syncCatStateFromSelection();
+  refreshCatChipsUI();
+  loadTemplateIntoEditor();
+  render();
+}
 function getEffectiveTplMode(){
   if (state.tplMode === 'auto') return state.selected.size <= 1 ? 'single' : 'multi';
   return state.tplMode;
@@ -868,15 +1016,19 @@ function buildChips() {
   });
   chips.innerHTML = html;
   chips.querySelectorAll('.cat-chip').forEach(b => b.onclick = () => {
-    state.cat = b.dataset.cat;
-    chips.querySelectorAll('.cat-chip').forEach(x => x.classList.toggle('on', x === b));
-    const label = state.cat === '__all__' ? '전체' : state.cat;
-    document.getElementById('catMeta').textContent = label;
-    document.getElementById('msgCatLabel').textContent = label;
-    document.getElementById('msgCatBadge').textContent = label;
+    const c = b.dataset.cat;
+    if (c === '__all__') {
+      state.selectedCats.clear();
+    } else {
+      if (state.selectedCats.has(c)) state.selectedCats.delete(c);
+      else state.selectedCats.add(c);
+    }
+    syncCatStateFromSelection();
+    refreshCatChipsUI();
     loadTemplateIntoEditor();
     render();
   });
+  refreshCatChipsUI();
 }
 
 document.querySelectorAll('#typeToggle button').forEach(b => {
@@ -910,7 +1062,7 @@ function getFiltered() {
   return DATA.filter(d => {
     if (state.type !== 'all' && d.type !== state.type) return false;
     const cats = d.categories || [d.category];
-    if (state.cat !== '__all__' && !cats.includes(state.cat)) return false;
+    if (state.selectedCats.size > 0 && !cats.some(c => state.selectedCats.has(c))) return false;
     if (state.search) {
       const inTitle = d.title.toLowerCase().includes(state.search);
       const inCat = cats.some(c => c.toLowerCase().includes(state.search));
@@ -962,6 +1114,9 @@ function render() {
         <div class="item-title">${highlight(d.title, state.search)}</div>
         <div class="item-link">${escapeHtml(d.url)}</div>
       </div>
+      <a href="${escapeHtml(d.url)}" target="_blank" rel="noopener noreferrer" class="item-open" title="새 창에서 열기" onclick="event.stopPropagation()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
     </div>`;
   });
   list.innerHTML = html;
@@ -1066,18 +1221,33 @@ function substituteTemplate(tpl) {
   const blog = buildBlogLinks();
   const yt = buildYoutubeLinks();
   const all = buildAllLinks();
+  const hasBlog = !!blog;
+  const hasYt = !!yt;
   const firstIdx = Array.from(state.selected)[0];
   const first = (firstIdx != null) ? DATA[firstIdx] : null;
   const title = first ? first.title : '';
   const url = first ? first.url : '';
   const type = first ? first.type : '';
-  return tpl
-    .replace(/\{\{BLOG_LINKS\}\}/g, blog || '{{BLOG_LINKS}}')
-    .replace(/\{\{YOUTUBE_LINKS\}\}/g, yt || '{{YOUTUBE_LINKS}}')
-    .replace(/\{\{LINKS\}\}/g, all || '{{LINKS}}')
-    .replace(/\{\{TITLE\}\}/g, title || '{{TITLE}}')
-    .replace(/\{\{URL\}\}/g, url || '{{URL}}')
-    .replace(/\{\{TYPE\}\}/g, type || '{{TYPE}}');
+
+  let out = tpl;
+  // 조건부 블록: {{?BLOG}}...{{/BLOG}}, {{?YOUTUBE}}...{{/YOUTUBE}}, {{?ITEMS}}...{{/ITEMS}}
+  // 해당 종류가 선택되지 않았으면 블록 전체(라벨/링크/구분선 포함)가 사라짐
+  out = out.replace(/\{\{\?BLOG\}\}\n?([\s\S]*?)\{\{\/BLOG\}\}\n?/g, (_, inner) => hasBlog ? inner : '');
+  out = out.replace(/\{\{\?YOUTUBE\}\}\n?([\s\S]*?)\{\{\/YOUTUBE\}\}\n?/g, (_, inner) => hasYt ? inner : '');
+  out = out.replace(/\{\{\?ITEMS\}\}\n?([\s\S]*?)\{\{\/ITEMS\}\}\n?/g, (_, inner) => (hasBlog || hasYt) ? inner : '');
+
+  // 일반 자리표시자 — 값이 없으면 빈 문자열 (이전엔 자리표시자 텍스트가 그대로 남아있었음)
+  out = out
+    .replace(/\{\{BLOG_LINKS\}\}/g, blog)
+    .replace(/\{\{YOUTUBE_LINKS\}\}/g, yt)
+    .replace(/\{\{LINKS\}\}/g, all)
+    .replace(/\{\{TITLE\}\}/g, title)
+    .replace(/\{\{URL\}\}/g, url)
+    .replace(/\{\{TYPE\}\}/g, type);
+
+  // 3줄 이상 연속된 빈줄을 2줄로 정리
+  out = out.replace(/\n{3,}/g, '\n\n');
+  return out;
 }
 
 let _userEdited = false;
@@ -1127,17 +1297,6 @@ function updateTplModeUI(){
   }
 }
 
-function saveTemplate() {
-  const text = msgArea.value;
-  if (!text.trim()) { showToast('비어있는 템플릿은 저장할 수 없습니다'); return; }
-  const mode = getEffectiveTplMode();
-  STORE.setTpl(state.cat, text, mode);
-  const catName = state.cat === '__all__' ? '전체' : state.cat;
-  const modeName = mode === 'single' ? '단일' : '다수';
-  showToast(`'${catName}' ${modeName} 템플릿이 저장되었습니다`);
-  _userEdited = false;
-}
-
 function resetTemplate() {
   const mode = getEffectiveTplMode();
   const modeName = mode === 'single' ? '단일' : '다수';
@@ -1168,6 +1327,11 @@ async function copyText(txt) {
 function saveMessage() {
   const text = msgArea.value.trim();
   if (!text) { showToast('저장할 메시지가 없습니다'); return; }
+  const catName = state.cat === '__all__' ? '전체' : state.cat;
+  const defaultTitle = `${catName} 메시지 (${fmtDate(new Date().toISOString())})`;
+  const title = prompt('메시지 제목을 입력하세요.', defaultTitle);
+  if (title === null) return;
+  const trimmed = title.trim() || defaultTitle;
   const items = Array.from(state.selected).map(i => ({
     type: DATA[i].type, title: DATA[i].title, url: DATA[i].url, category: DATA[i].category
   }));
@@ -1175,13 +1339,14 @@ function saveMessage() {
   list.unshift({
     id: Date.now(),
     timestamp: new Date().toISOString(),
-    category: state.cat === '__all__' ? '전체' : state.cat,
+    title: trimmed,
+    category: catName,
     items: items,
     message: text,
   });
   STORE.setSaved(list);
   renderSaved();
-  showToast('보관함에 저장되었습니다');
+  showToast(`'${trimmed}' 메시지가 보관함에 저장되었습니다`);
   if (!document.getElementById('savedToggle').classList.contains('open')) {
     document.getElementById('savedToggle').classList.add('open');
   }
@@ -1207,8 +1372,10 @@ function renderSaved() {
   let html = '';
   list.forEach((r, idx) => {
     const preview = r.message.replace(/\n/g,' ').slice(0,80);
+    const title = r.title || `${r.category} 메시지`;
     html += `<div class="saved-row">
       <div class="saved-info">
+        <div class="saved-title">${escapeHtml(title)}</div>
         <div class="saved-meta">
           <span class="saved-cat">${escapeHtml(r.category)}</span>
           <span>${fmtDate(r.timestamp)}</span>
@@ -1219,19 +1386,35 @@ function renderSaved() {
       <div class="saved-actions">
         <button class="saved-btn" onclick="openDetail(${idx})">보기</button>
         <button class="saved-btn" onclick="copySaved(${idx})">복사</button>
+        <button class="saved-btn" onclick="renameSaved(${idx})">이름변경</button>
         <button class="saved-btn danger" onclick="deleteSaved(${idx})">삭제</button>
       </div>
     </div>`;
   });
   sl.innerHTML = html;
+  if (typeof populateQuickPick === 'function') populateQuickPick();
+}
+
+function renameSaved(idx) {
+  const list = STORE.getSaved();
+  const r = list[idx];
+  if (!r) return;
+  const current = r.title || `${r.category} 메시지`;
+  const next = prompt('메시지 제목을 입력하세요.', current);
+  if (next === null) return;
+  r.title = next.trim() || current;
+  STORE.setSaved(list);
+  renderSaved();
+  showToast('제목이 변경되었습니다');
 }
 
 function openDetail(idx) {
   const r = STORE.getSaved()[idx];
   if (!r) return;
   state.modalIdx = idx;
+  const title = r.title || `${r.category} 메시지`;
   document.getElementById('detailMeta').innerHTML =
-    `<strong>${escapeHtml(r.category)}</strong> · ${fmtDate(r.timestamp)} · 컨텐츠 ${r.items.length}건`;
+    `<strong>${escapeHtml(title)}</strong><br><span style="font-size:12px;color:var(--ink-muted)">${escapeHtml(r.category)} · ${fmtDate(r.timestamp)} · 컨텐츠 ${r.items.length}건</span>`;
   document.getElementById('detailText').textContent = r.message;
   document.getElementById('modalBg').classList.add('show');
 }
@@ -1279,7 +1462,8 @@ function downloadAll() {
   if (!list.length) { showToast('다운로드할 메시지가 없습니다'); return; }
   let text = `컨빌 컨텐츠 응대 메시지 보관함\n생성일: ${fmtDate(new Date().toISOString())}\n총 ${list.length}건\n\n${'='.repeat(60)}\n\n`;
   list.forEach((r, i) => {
-    text += `[${i+1}] ${r.category} · ${fmtDate(r.timestamp)}\n`;
+    const title = r.title || `${r.category} 메시지`;
+    text += `[${i+1}] ${title}\n    ${r.category} · ${fmtDate(r.timestamp)}\n`;
     text += `컨텐츠 ${r.items.length}건:\n`;
     r.items.forEach(it => {
       text += `  - [${it.type}] ${it.title}\n    ${it.url}\n`;
@@ -1292,9 +1476,12 @@ function downloadAll() {
 
 function exportJSON() {
   const data = {
+    version: 2,
     exported_at: new Date().toISOString(),
     saved_messages: STORE.getSaved(),
-    templates: {},        // 하위 호환: 다수(multi) 모드 템플릿
+    quick_messages: (typeof qmState !== 'undefined' && qmState.items) ? qmState.items : [],
+    quick_links: (typeof qlState !== 'undefined' && qlState.links) ? qlState.links : [],
+    templates: {},        // 다수(multi) 모드 템플릿
     templates_single: {}, // 단일 모드 템플릿
   };
   Object.keys(CAT_PHRASE).forEach(c => {
@@ -1306,6 +1493,80 @@ function exportJSON() {
   download(`컨빌_백업_${new Date().toISOString().slice(0,10)}.json`,
     JSON.stringify(data, null, 2), 'application/json');
   showToast('백업 파일을 다운로드합니다');
+}
+
+function importJSON(file){
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    let data;
+    try { data = JSON.parse(e.target.result); }
+    catch (err) { alert('JSON 파일을 읽을 수 없습니다: ' + err.message); return; }
+    if (typeof data !== 'object' || data === null) { alert('유효한 백업 파일이 아닙니다.'); return; }
+
+    const summary = [];
+    if (Array.isArray(data.saved_messages)) summary.push(`보관함 ${data.saved_messages.length}건`);
+    if (Array.isArray(data.quick_messages)) summary.push(`자주 쓰는 메시지 ${data.quick_messages.length}건`);
+    if (Array.isArray(data.quick_links))    summary.push(`자주 쓰는 링크 ${data.quick_links.length}건`);
+    if (data.templates)                      summary.push(`다수 템플릿 ${Object.keys(data.templates).length}개`);
+    if (data.templates_single)               summary.push(`단일 템플릿 ${Object.keys(data.templates_single).length}개`);
+    if (!summary.length) { alert('파일에서 복원할 데이터를 찾을 수 없습니다.'); return; }
+
+    if (!confirm(`백업 파일에서 다음을 복원합니다:\n\n• ${summary.join('\n• ')}\n\n` +
+                 `목록 항목(보관함/자주쓰는메시지/자주쓰는링크)은 기존 데이터에 추가됩니다 (중복 제외).\n` +
+                 `템플릿은 백업의 값으로 덮어씁니다.\n\n계속할까요?`)) return;
+
+    const counts = { saved:0, quick:0, links:0, tplMulti:0, tplSingle:0 };
+
+    if (Array.isArray(data.saved_messages)) {
+      const existing = STORE.getSaved();
+      const existingIds = new Set(existing.map(r => r.id));
+      data.saved_messages.forEach(r => {
+        if (r && r.id != null && !existingIds.has(r.id)) {
+          existing.unshift(r); existingIds.add(r.id); counts.saved++;
+        }
+      });
+      STORE.setSaved(existing);
+    }
+    if (Array.isArray(data.quick_messages) && typeof qmState !== 'undefined') {
+      const existingIds = new Set(qmState.items.map(m => m.id));
+      data.quick_messages.forEach(m => {
+        if (m && m.id && !existingIds.has(m.id)) {
+          qmState.items.unshift(m); existingIds.add(m.id); counts.quick++;
+        }
+      });
+      if (typeof saveQuickMsgs === 'function') saveQuickMsgs();
+    }
+    if (Array.isArray(data.quick_links) && typeof qlState !== 'undefined') {
+      const existingIds = new Set(qlState.links.map(l => l.id));
+      const existingUrls = new Set(qlState.links.map(l => l.url));
+      data.quick_links.forEach(l => {
+        if (l && l.id && !existingIds.has(l.id) && !existingUrls.has(l.url)) {
+          qlState.links.push(l); existingIds.add(l.id); existingUrls.add(l.url); counts.links++;
+        }
+      });
+      if (typeof saveQuickLinks === 'function') saveQuickLinks();
+    }
+    if (data.templates && typeof data.templates === 'object') {
+      Object.entries(data.templates).forEach(([cat, txt]) => {
+        if (typeof txt === 'string') { STORE.setTpl(cat, txt, 'multi'); counts.tplMulti++; }
+      });
+    }
+    if (data.templates_single && typeof data.templates_single === 'object') {
+      Object.entries(data.templates_single).forEach(([cat, txt]) => {
+        if (typeof txt === 'string') { STORE.setTpl(cat, txt, 'single'); counts.tplSingle++; }
+      });
+    }
+
+    // UI refresh
+    if (typeof renderSaved === 'function') renderSaved();
+    if (typeof renderQuickMsgs === 'function') renderQuickMsgs();
+    if (typeof renderQuickLinks === 'function') renderQuickLinks();
+    if (typeof loadTemplateIntoEditor === 'function') loadTemplateIntoEditor();
+    if (typeof populateQuickPick === 'function') populateQuickPick();
+
+    showToast(`복원 완료: 보관함 +${counts.saved}, 자주쓰는메시지 +${counts.quick}, 자주쓰는링크 +${counts.links}, 템플릿 +${counts.tplMulti+counts.tplSingle}`);
+  };
+  reader.readAsText(file, 'utf-8');
 }
 
 function download(filename, content, mime) {
@@ -1322,6 +1583,80 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ====== Mobile Step Wizard ======
+function setMobileStep(step){
+  const s = String(step);
+  document.body.dataset.mobileStep = s;
+  // step indicator UI
+  document.querySelectorAll('.step-dot').forEach(b => {
+    const n = b.dataset.step;
+    b.classList.toggle('on', n === s);
+    b.classList.toggle('done', Number(n) < Number(s));
+  });
+  document.querySelectorAll('.step-line').forEach((line, i) => {
+    line.classList.toggle('done', (i + 1) < Number(s));
+  });
+  // 스크롤을 위로 (모바일 사용 흐름)
+  if (window.matchMedia('(max-width:768px)').matches) {
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+}
+
+// ====== Quick Pick (저장된 메시지 + 자주 쓰는 메시지) ======
+function populateQuickPick(){
+  const sel = document.getElementById('quickPickSelect');
+  if (!sel) return;
+  const saved = (typeof STORE !== 'undefined' && STORE.getSaved) ? STORE.getSaved() : [];
+  const quick = (typeof qmState !== 'undefined' && qmState.items) ? qmState.items : [];
+  let html = '<option value="">메시지 선택해서 불러오기...</option>';
+  if (quick.length) {
+    html += '<optgroup label="📌 자주 쓰는 메시지">';
+    quick.forEach(m => {
+      const label = `${m.name}${m.category && m.category !== '전체' ? ` (${m.category})` : ''}`;
+      html += `<option value="qm:${m.id}">${escapeHtml(label)}</option>`;
+    });
+    html += '</optgroup>';
+  }
+  if (saved.length) {
+    html += '<optgroup label="💾 보관함">';
+    saved.forEach((r, idx) => {
+      const title = r.title || `${r.category} 메시지`;
+      const label = `${title} (${fmtDate(r.timestamp).slice(0,10)})`;
+      html += `<option value="sv:${idx}">${escapeHtml(label)}</option>`;
+    });
+    html += '</optgroup>';
+  }
+  sel.innerHTML = html;
+  const sub = document.getElementById('quickPickSub');
+  if (sub) sub.textContent = `자주 쓰는 ${quick.length}건 · 보관함 ${saved.length}건`;
+}
+function quickPickLoad(val){
+  if (!val) return;
+  let message = '', category = '';
+  if (val.startsWith('qm:')) {
+    const id = val.slice(3);
+    const m = qmState.items.find(x => x.id === id);
+    if (!m) return;
+    message = m.message; category = m.category;
+  } else if (val.startsWith('sv:')) {
+    const idx = Number(val.slice(3));
+    const r = STORE.getSaved()[idx];
+    if (!r) return;
+    message = r.message; category = r.category;
+  }
+  // 카테고리 맞춰주기 (단일로 설정)
+  if (category && category !== '전체' && CATEGORIES.includes(category)) {
+    selectCategoriesExclusive(category);
+  } else {
+    selectCategoriesExclusive(); // 전체로
+  }
+  msgArea.value = message;
+  _userEdited = true;
+  setMobileStep(3);
+  setTimeout(() => msgArea.scrollIntoView({behavior:'smooth', block:'center'}), 300);
+  showToast('메시지를 03번에 불러왔습니다');
 }
 
 // ====== Quick Links (자주 쓰는 링크) ======
@@ -1342,6 +1677,7 @@ const qlState = {
   qaSearch: '',
   qaSelected: new Set(), // keys: "type|url"
   editId: null,
+  lastDefaultMsg: '', // 모달 안에서 마지막으로 자동 채워준 기본 메시지 (카테고리 변경 시 사용자 편집 감지용)
 };
 
 function loadQuickLinks(){
@@ -1408,8 +1744,21 @@ function escapeHtml(s){
 function copyQuickLink(id){
   const item = qlState.links.find(l => l.id === id);
   if (!item) return;
-  const msg = (item.message || '').trim();
-  const text = msg ? (msg + '\n\n' + item.title + '\n' + item.url) : (item.title + '\n' + item.url);
+  const rawMsg = (item.message || '').trim();
+  const hasPlaceholder = /\{\{(TITLE|URL|TYPE)\}\}/.test(rawMsg);
+  let text;
+  if (hasPlaceholder) {
+    // 자리표시자가 있으면 치환만 (제목/URL이 메시지 본문에 포함됨)
+    text = rawMsg
+      .replace(/\{\{TITLE\}\}/g, item.title)
+      .replace(/\{\{URL\}\}/g, item.url)
+      .replace(/\{\{TYPE\}\}/g, item.type);
+  } else if (rawMsg) {
+    // 플레이스홀더 없는 일반 메시지 → 메시지 뒤에 제목+URL 첨부
+    text = rawMsg + '\n\n' + item.title + '\n' + item.url;
+  } else {
+    text = item.title + '\n' + item.url;
+  }
   const btn = document.querySelector(`.quick-link-btn[data-ql-id="${id}"]`);
   const done = () => {
     showToast(`복사됨: ${item.title.length > 30 ? item.title.slice(0,30)+'…' : item.title}`);
@@ -1440,6 +1789,130 @@ function removeQuickLink(id){
   showToast('삭제되었습니다.');
 }
 
+// ====== Quick Messages (자주 쓰는 메시지) ======
+const QM_STORAGE_KEY = 'convil_quick_messages_v1';
+const qmState = { items: [] };
+
+function loadQuickMsgs(){
+  try {
+    const raw = localStorage.getItem(QM_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) { qmState.items = parsed; return; }
+    }
+  } catch(e){}
+  qmState.items = [];
+}
+function saveQuickMsgs(){
+  try { localStorage.setItem(QM_STORAGE_KEY, JSON.stringify(qmState.items)); } catch(e){}
+}
+function renderQuickMsgs(){
+  const body = document.getElementById('quickMsgBody');
+  const sub = document.getElementById('quickMsgSub');
+  if (!body) return;
+  if (!qmState.items.length) {
+    body.innerHTML = '<div class="quick-msg-empty">완성한 메시지를 "📌 자주 쓰는 메시지로 저장" 버튼으로 등록해 보세요.</div>';
+    if (sub) sub.textContent = '완성한 메시지를 저장해두고 클릭 한 번으로 복사·불러오기';
+    return;
+  }
+  let html = '';
+  qmState.items.forEach(m => {
+    const preview = (m.message || '').replace(/\s+/g,' ').trim();
+    html += `<div class="quick-msg-item" data-qm-id="${m.id}">
+      <div class="quick-msg-main" onclick="copyQuickMsg('${m.id}')" title="클릭하여 복사">
+        <div class="quick-msg-name">${escapeHtml(m.name || '(이름 없음)')}</div>
+        <div class="quick-msg-meta"><span class="quick-msg-cat-badge">${escapeHtml(m.category || '전체')}</span><span>${fmtDate(m.timestamp)}</span></div>
+        <div class="quick-msg-preview">${escapeHtml(preview)}</div>
+      </div>
+      <div class="quick-msg-actions">
+        <button onclick="loadQuickMsg('${m.id}')" title="03번에 불러오기">⇧</button>
+        <button onclick="editQuickMsg('${m.id}')" title="이름·내용 편집">✏️</button>
+        <button class="qm-delete" onclick="removeQuickMsg('${m.id}')" title="삭제">×</button>
+      </div>
+    </div>`;
+  });
+  body.innerHTML = html;
+  if (sub) sub.textContent = `${qmState.items.length}개 저장됨 · 항목 클릭=복사 / ⇧=03번에 불러오기`;
+  if (typeof populateQuickPick === 'function') populateQuickPick();
+}
+
+function saveCurrentAsQuickMsg(){
+  const text = msgArea.value.trim();
+  if (!text) { showToast('저장할 메시지가 없습니다'); return; }
+  const defaultName = (state.cat === '__all__' ? '전체' : state.cat) + ' 메시지';
+  const name = prompt('이 메시지의 이름을 입력하세요.\n(나중에 빠르게 찾기 위한 짧은 제목)', defaultName);
+  if (name === null) return;
+  const trimmed = name.trim() || defaultName;
+  qmState.items.unshift({
+    id: 'qm-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+    name: trimmed,
+    category: state.cat === '__all__' ? '전체' : state.cat,
+    message: text,
+    timestamp: new Date().toISOString(),
+  });
+  saveQuickMsgs();
+  renderQuickMsgs();
+  showToast(`'${trimmed}' 메시지가 저장되었습니다.`);
+}
+
+function copyQuickMsg(id){
+  const m = qmState.items.find(x => x.id === id);
+  if (!m) return;
+  const text = m.message || '';
+  const el = document.querySelector(`.quick-msg-item[data-qm-id="${id}"]`);
+  const done = () => {
+    showToast(`'${m.name}' 복사됨`);
+    if (el) {
+      el.classList.add('copied');
+      setTimeout(() => el.classList.remove('copied'), 1200);
+    }
+  };
+  navigator.clipboard.writeText(text).then(done).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    done();
+  });
+}
+
+function loadQuickMsg(id){
+  const m = qmState.items.find(x => x.id === id);
+  if (!m) return;
+  if (msgArea.value.trim() && !confirm('현재 03번 메시지를 이 저장된 메시지로 덮어쓸까요?')) return;
+  msgArea.value = m.message || '';
+  _userEdited = true;
+  // 카테고리도 같이 맞춰주기 (단일)
+  if (m.category && m.category !== '전체' && CATEGORIES.includes(m.category)) {
+    selectCategoriesExclusive(m.category);
+  }
+  msgArea.scrollIntoView({behavior:'smooth', block:'center'});
+  showToast(`'${m.name}' 메시지를 03번에 불러왔습니다.`);
+}
+
+function editQuickMsg(id){
+  const m = qmState.items.find(x => x.id === id);
+  if (!m) return;
+  const newName = prompt('메시지 이름:', m.name);
+  if (newName === null) return;
+  const newMsg = prompt('메시지 내용 (긴 내용은 03번에 불러와서 수정 후 다시 저장하는 것을 권장):', m.message);
+  if (newMsg === null) return;
+  m.name = newName.trim() || m.name;
+  m.message = newMsg;
+  saveQuickMsgs();
+  renderQuickMsgs();
+  showToast('수정되었습니다.');
+}
+
+function removeQuickMsg(id){
+  const m = qmState.items.find(x => x.id === id);
+  if (!m) return;
+  if (!confirm(`'${m.name}' 메시지를 삭제할까요?`)) return;
+  qmState.items = qmState.items.filter(x => x.id !== id);
+  saveQuickMsgs();
+  renderQuickMsgs();
+  showToast('삭제되었습니다.');
+}
+
 // ----- Add / Edit modal -----
 function resetQaForm(){
   qlState.qaCat = null;
@@ -1460,6 +1933,10 @@ function setModalTitle(text){
 function setConfirmBtnLabel(text){
   document.querySelector('#quickAddBg .modal-foot .btn-primary').textContent = text;
 }
+function getQuickLinkDefaultMessage(cat){
+  const c = (cat && cat !== '__all__' && CAT_PHRASE[cat]) ? cat : '__all__';
+  return STORE.getTpl(c, 'single');
+}
 function openQuickAddModal(){
   qlState.editId = null;
   qlState.qaTab = 'lib';
@@ -1467,6 +1944,13 @@ function openQuickAddModal(){
   document.querySelector('[data-qatab="lib"]').style.display = '';
   setModalTitle('자주 쓰는 링크 추가');
   setConfirmBtnLabel('추가');
+  // 카테고리 + 기본 메시지를 섹션01의 현재 카테고리(또는 첫번째)로 프리필
+  const initCat = (state.cat && state.cat !== '__all__' && CATEGORIES.includes(state.cat)) ? state.cat : CATEGORIES[0];
+  const catSel = document.getElementById('qaManualCat');
+  catSel.value = initCat;
+  const defaultMsg = getQuickLinkDefaultMessage(initCat);
+  document.getElementById('qaManualMsg').value = defaultMsg;
+  qlState.lastDefaultMsg = defaultMsg;
   switchQuickTab('lib');
   renderQaCatChips();
   renderQaList();
@@ -1611,13 +2095,14 @@ function confirmQuickAdd(){
       if (!d) return;
       if (qlState.links.some(l => l.type === d.type && l.url === d.url)) return;
       const cat = qlState.qaCat || d.category;
-      qlState.links.push({id: 'ql-' + Date.now() + '-' + Math.random().toString(36).slice(2,7), category: cat, type: d.type, title: d.title, url: d.url, message: ''});
+      const message = getQuickLinkDefaultMessage(cat);
+      qlState.links.push({id: 'ql-' + Date.now() + '-' + Math.random().toString(36).slice(2,7), category: cat, type: d.type, title: d.title, url: d.url, message});
       added++;
     });
     saveQuickLinks();
     renderQuickLinks();
     closeQuickAddModal();
-    showToast(`${added}건이 자주 쓰는 링크에 추가되었습니다. ✏️로 기본 메시지를 추가할 수 있어요.`);
+    showToast(`${added}건이 자주 쓰는 링크에 추가되었습니다. (03번 메시지 템플릿이 자동 적용됨)`);
   } else {
     const cat = document.getElementById('qaManualCat').value;
     const type = document.querySelector('input[name=qaType]:checked').value;
@@ -1636,6 +2121,18 @@ function confirmQuickAdd(){
 document.getElementById('qaSearch').addEventListener('input', e => {
   qlState.qaSearch = e.target.value.trim().toLowerCase();
   renderQaList();
+});
+
+// 직접 입력 탭 — 카테고리 변경 시, 사용자가 메시지를 직접 수정하지 않은 상태면 새 카테고리의 03 단일 템플릿으로 갱신
+document.getElementById('qaManualCat').addEventListener('change', () => {
+  if (qlState.editId) return; // 편집 모드면 자동 갱신 안 함
+  const cat = document.getElementById('qaManualCat').value;
+  const ta = document.getElementById('qaManualMsg');
+  if (ta.value === '' || ta.value === qlState.lastDefaultMsg) {
+    const newMsg = getQuickLinkDefaultMessage(cat);
+    ta.value = newMsg;
+    qlState.lastDefaultMsg = newMsg;
+  }
 });
 
 document.addEventListener('keydown', e => {
@@ -1719,6 +2216,7 @@ function applyLibrary(newData, opts={}){
   DATA = newData;
   state.selected.clear();
   state.cat = '__all__';
+  state.selectedCats.clear();
   state.search = '';
   state.type = 'all';
   const searchEl = document.getElementById('search');
@@ -1798,6 +2296,13 @@ document.getElementById('excelInput').addEventListener('change', e => {
   reader.readAsArrayBuffer(file);
 });
 
+document.getElementById('jsonImportInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  importJSON(file);
+  e.target.value = '';
+});
+
 // ====== Init ======
 (function loadStoredLibrary(){
   try {
@@ -1819,6 +2324,10 @@ loadTemplateIntoEditor();
 renderSaved();
 loadQuickLinks();
 renderQuickLinks();
+loadQuickMsgs();
+renderQuickMsgs();
+populateQuickPick();
+setMobileStep(1);
 document.getElementById('totalCount').textContent = DATA.length;
 (function updateHeaderCounts(){
   const blogN = DATA.filter(d => d.type === '블로그').length;
